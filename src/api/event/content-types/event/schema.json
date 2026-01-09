@@ -73,20 +73,6 @@
         "files"
       ]
     },
-    "category": {
-      "type": "enumeration",
-      "pluginOptions": {
-        "i18n": {
-          "localized": false
-        }
-      },
-      "enum": [
-        "Music",
-        "Tour",
-        "Food & Drink",
-        "Market"
-      ]
-    },
     "type": {
       "type": "enumeration",
       "pluginOptions": {
@@ -107,6 +93,11 @@
           "localized": true
         }
       }
+    },
+    "event_category": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::event-category.event-category"
     }
   }
 }
