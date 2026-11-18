@@ -8,7 +8,26 @@ module.exports = {
    *
    * This gives you an opportunity to extend code.
    */
-  register(/*{ strapi }*/) {},
+  register({ strapi }) {
+    // Assign the next sequential newsId to news created without one, so the
+    // website's numeric deep links (/news/:newsId) keep working.
+    strapi.documents.use(async (context, next) => {
+      if (context.uid === 'api::news-item.news-item' && context.action === 'create') {
+        const data = context.params.data || {};
+
+        if (data.newsId == null) {
+          const latest = await strapi.db.query('api::news-item.news-item').findOne({
+            select: ['newsId'],
+            where: { newsId: { $notNull: true } },
+            orderBy: { newsId: 'desc' },
+          });
+          context.params.data = { ...data, newsId: (latest?.newsId || 0) + 1 };
+        }
+      }
+
+      return next();
+    });
+  },
 
   /**
    * An asynchronous bootstrap function that runs before
@@ -77,7 +96,9 @@ module.exports = {
     if (existingEvents.length === 0 && targetCategoryDocumentIds.length > 0) {
       console.log('Creating localized events...');
 
-      const placeholderImageId = 9;
+      // The demo image only exists in databases seeded from the template export.
+      const placeholderImage = await strapi.query('plugin::upload.file').findOne({ where: { id: 9 } });
+      const placeholderImageId = placeholderImage ? placeholderImage.id : null;
 
       for (let i = 1; i <= 100; i++) {
         const chosenCategoryDocumentId = targetCategoryDocumentIds[i % targetCategoryDocumentIds.length];
