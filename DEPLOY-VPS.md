@@ -21,7 +21,7 @@ Strapi 5 requires MariaDB >= 10.3 (`mariadb --version`).
 
 ## 3. App
 
-Node 20–24 is required (Node 22 LTS recommended, e.g. via nvm for the site user).
+Node 22–26 is required (e.g. via nvm for the site user). Install pm2 under that same Node version.
 
 ```bash
 git clone https://github.com/sjaindl/strapi-cloud-template-blog-49970f95ac.git ~/strapi
