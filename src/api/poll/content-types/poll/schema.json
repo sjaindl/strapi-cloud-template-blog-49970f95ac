@@ -1,0 +1,42 @@
+{
+  "kind": "collectionType",
+  "collectionName": "polls",
+  "info": {
+    "singularName": "poll",
+    "pluralName": "polls",
+    "displayName": "Voting",
+    "description": "Tor des Jahres / Spieler der Saison eines Jahres. Nur offene Votings nehmen Stimmen an."
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "type": {
+      "type": "enumeration",
+      "enum": [
+        "goalOfTheYear",
+        "playerOfTheYear"
+      ],
+      "required": true
+    },
+    "year": {
+      "type": "string",
+      "required": true,
+      "regex": "^\\d{4}$"
+    },
+    "open": {
+      "type": "boolean",
+      "default": false
+    },
+    "surveyUrl": {
+      "type": "string"
+    },
+    "options": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::poll-option.poll-option",
+      "mappedBy": "poll"
+    }
+  }
+}

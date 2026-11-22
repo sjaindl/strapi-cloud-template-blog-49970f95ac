@@ -1,0 +1,41 @@
+{
+  "kind": "collectionType",
+  "collectionName": "poll_options",
+  "info": {
+    "singularName": "poll-option",
+    "pluralName": "poll-options",
+    "displayName": "Voting-Option",
+    "description": "Ein Tor (Video) oder ein Spieler, für den abgestimmt werden kann. Die Stimmen sind nur im Admin sichtbar."
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "poll": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::poll.poll",
+      "inversedBy": "options"
+    },
+    "video": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::video.video"
+    },
+    "player": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::player.player"
+    },
+    "name": {
+      "type": "string"
+    },
+    "votes": {
+      "type": "integer",
+      "default": 0,
+      "min": 0,
+      "private": true
+    }
+  }
+}

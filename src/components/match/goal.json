@@ -1,0 +1,14 @@
+{
+  "collectionName": "components_match_goals",
+  "info": {
+    "displayName": "Torschütze",
+    "icon": "football",
+    "description": "Ein Torschütze des Spiels: Spieler (oder Name, z. B. \"Eigentor\") und Anzahl Tore."
+  },
+  "options": {},
+  "attributes": {
+    "player": { "type": "relation", "relation": "oneToOne", "target": "api::player.player" },
+    "name": { "type": "string" },
+    "count": { "type": "integer", "default": 1, "min": 1, "required": true }
+  }
+}

@@ -1,5 +1,27 @@
 import type { Schema, Struct } from '@strapi/strapi';
 
+export interface MatchGoal extends Struct.ComponentSchema {
+  collectionName: 'components_match_goals';
+  info: {
+    description: 'Ein Torsch\u00FCtze des Spiels: Spieler (oder Name, z. B. "Eigentor") und Anzahl Tore.';
+    displayName: 'Torsch\u00FCtze';
+    icon: 'football';
+  };
+  attributes: {
+    count: Schema.Attribute.Integer &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 1;
+        },
+        number
+      > &
+      Schema.Attribute.DefaultTo<1>;
+    name: Schema.Attribute.String;
+    player: Schema.Attribute.Relation<'oneToOne', 'api::player.player'>;
+  };
+}
+
 export interface SharedMedia extends Struct.ComponentSchema {
   collectionName: 'components_shared_media';
   info: {
@@ -102,6 +124,7 @@ export interface ShopOptionGroup extends Struct.ComponentSchema {
 declare module '@strapi/strapi' {
   export namespace Public {
     export interface ComponentSchemas {
+      'match.goal': MatchGoal;
       'shared.media': SharedMedia;
       'shared.quote': SharedQuote;
       'shared.rich-text': SharedRichText;

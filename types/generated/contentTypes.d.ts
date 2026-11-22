@@ -976,6 +976,68 @@ export interface ApiGlobalGlobal extends Struct.SingleTypeSchema {
   };
 }
 
+export interface ApiMatchMatch extends Struct.CollectionTypeSchema {
+  collectionName: 'matches';
+  info: {
+    description: 'Spiele mit Ergebnis, Torsch\u00FCtzen und Videos. Ohne Ergebnis gilt ein Spiel als noch nicht gespielt. Veranstaltungen (z. B. Entenrennen) haben den Bewerb "Event" und einen Titel statt Mannschaften.';
+    displayName: 'Spiel';
+    pluralName: 'matches';
+    singularName: 'match';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    additionalInfo: Schema.Attribute.String;
+    awayScore: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 0;
+        },
+        number
+      >;
+    awayTeam: Schema.Attribute.String;
+    competition: Schema.Attribute.Enumeration<
+      ['Meisterschaft', 'Cup', 'Testspiel', 'Event']
+    > &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'Meisterschaft'>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    date: Schema.Attribute.Date;
+    goals: Schema.Attribute.Component<'match.goal', true>;
+    homeScore: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 0;
+        },
+        number
+      >;
+    homeTeam: Schema.Attribute.String;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::match.match'> &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    round: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 1;
+        },
+        number
+      >;
+    season: Schema.Attribute.Relation<'manyToOne', 'api::season.season'>;
+    stage: Schema.Attribute.String;
+    time: Schema.Attribute.Time;
+    title: Schema.Attribute.String;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    venue: Schema.Attribute.String;
+    videos: Schema.Attribute.Relation<'oneToMany', 'api::video.video'>;
+  };
+}
+
 export interface ApiMemberMember extends Struct.CollectionTypeSchema {
   collectionName: 'members';
   info: {
@@ -1130,6 +1192,156 @@ export interface ApiPlayerPlayer extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiPollOptionPollOption extends Struct.CollectionTypeSchema {
+  collectionName: 'poll_options';
+  info: {
+    description: 'Ein Tor (Video) oder ein Spieler, f\u00FCr den abgestimmt werden kann. Die Stimmen sind nur im Admin sichtbar.';
+    displayName: 'Voting-Option';
+    pluralName: 'poll-options';
+    singularName: 'poll-option';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::poll-option.poll-option'
+    > &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String;
+    player: Schema.Attribute.Relation<'manyToOne', 'api::player.player'>;
+    poll: Schema.Attribute.Relation<'manyToOne', 'api::poll.poll'>;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    video: Schema.Attribute.Relation<'manyToOne', 'api::video.video'>;
+    votes: Schema.Attribute.Integer &
+      Schema.Attribute.Private &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 0;
+        },
+        number
+      > &
+      Schema.Attribute.DefaultTo<0>;
+  };
+}
+
+export interface ApiPollPoll extends Struct.CollectionTypeSchema {
+  collectionName: 'polls';
+  info: {
+    description: 'Tor des Jahres / Spieler der Saison eines Jahres. Nur offene Votings nehmen Stimmen an.';
+    displayName: 'Voting';
+    pluralName: 'polls';
+    singularName: 'poll';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::poll.poll'> &
+      Schema.Attribute.Private;
+    open: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    options: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::poll-option.poll-option'
+    >;
+    publishedAt: Schema.Attribute.DateTime;
+    surveyUrl: Schema.Attribute.String;
+    type: Schema.Attribute.Enumeration<['goalOfTheYear', 'playerOfTheYear']> &
+      Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    year: Schema.Attribute.String & Schema.Attribute.Required;
+  };
+}
+
+export interface ApiScorerScorer extends Struct.CollectionTypeSchema {
+  collectionName: 'scorers';
+  info: {
+    description: 'Tore pro Spieler und Saison (inkl. Testspiele), getrennt von den Torsch\u00FCtzen der einzelnen Spiele gepflegt.';
+    displayName: 'Torsch\u00FCtzenliste';
+    pluralName: 'scorers';
+    singularName: 'scorer';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    goals: Schema.Attribute.Integer &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 0;
+        },
+        number
+      > &
+      Schema.Attribute.DefaultTo<0>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::scorer.scorer'
+    > &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String;
+    player: Schema.Attribute.Relation<'manyToOne', 'api::player.player'>;
+    publishedAt: Schema.Attribute.DateTime;
+    season: Schema.Attribute.Relation<'manyToOne', 'api::season.season'>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiSeasonSeason extends Struct.CollectionTypeSchema {
+  collectionName: 'seasons';
+  info: {
+    description: 'Meisterschafts-Saison mit Liga und Hinweistexten. Der Schl\u00FCssel (z. B. 2026-2027) erscheint in der URL.';
+    displayName: 'Saison';
+    pluralName: 'seasons';
+    singularName: 'season';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    key: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique;
+    league: Schema.Attribute.String;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::season.season'
+    > &
+      Schema.Attribute.Private;
+    postResults: Schema.Attribute.Text;
+    preface: Schema.Attribute.Text;
+    publishedAt: Schema.Attribute.DateTime;
+    standings: Schema.Attribute.Relation<'oneToMany', 'api::standing.standing'>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiShopItemShopItem extends Struct.CollectionTypeSchema {
   collectionName: 'shop_items';
   info: {
@@ -1173,6 +1385,93 @@ export interface ApiShopItemShopItem extends Struct.CollectionTypeSchema {
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+  };
+}
+
+export interface ApiStandingStanding extends Struct.CollectionTypeSchema {
+  collectionName: 'standings';
+  info: {
+    description: 'Eine Zeile der Meisterschaftstabelle.';
+    displayName: 'Tabelle';
+    pluralName: 'standings';
+    singularName: 'standing';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    draws: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 0;
+        },
+        number
+      > &
+      Schema.Attribute.DefaultTo<0>;
+    games: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 0;
+        },
+        number
+      > &
+      Schema.Attribute.DefaultTo<0>;
+    goalsAgainst: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 0;
+        },
+        number
+      > &
+      Schema.Attribute.DefaultTo<0>;
+    goalsFor: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 0;
+        },
+        number
+      > &
+      Schema.Attribute.DefaultTo<0>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::standing.standing'
+    > &
+      Schema.Attribute.Private;
+    losses: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 0;
+        },
+        number
+      > &
+      Schema.Attribute.DefaultTo<0>;
+    place: Schema.Attribute.Integer &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 1;
+        },
+        number
+      >;
+    points: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    publishedAt: Schema.Attribute.DateTime;
+    season: Schema.Attribute.Relation<'manyToOne', 'api::season.season'>;
+    team: Schema.Attribute.String & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    wins: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 0;
+        },
+        number
+      > &
+      Schema.Attribute.DefaultTo<0>;
   };
 }
 
@@ -1257,6 +1556,39 @@ export interface ApiTeamPageTeamPage extends Struct.SingleTypeSchema {
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+  };
+}
+
+export interface ApiVideoVideo extends Struct.CollectionTypeSchema {
+  collectionName: 'videos';
+  info: {
+    description: 'Tor- oder Highlight-Video (YouTube) eines Spiels oder einer Veranstaltung.';
+    displayName: 'Video';
+    pluralName: 'videos';
+    singularName: 'video';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    description: Schema.Attribute.String;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::video.video'> &
+      Schema.Attribute.Private;
+    match: Schema.Attribute.Relation<'manyToOne', 'api::match.match'>;
+    name: Schema.Attribute.String;
+    order: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    player: Schema.Attribute.Relation<'manyToOne', 'api::player.player'>;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    url: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique;
   };
 }
 
@@ -1807,13 +2139,20 @@ declare module '@strapi/strapi' {
       'api::event.event': ApiEventEvent;
       'api::gallery.gallery': ApiGalleryGallery;
       'api::global.global': ApiGlobalGlobal;
+      'api::match.match': ApiMatchMatch;
       'api::member.member': ApiMemberMember;
       'api::news-item.news-item': ApiNewsItemNewsItem;
       'api::papp-fan.papp-fan': ApiPappFanPappFan;
       'api::player.player': ApiPlayerPlayer;
+      'api::poll-option.poll-option': ApiPollOptionPollOption;
+      'api::poll.poll': ApiPollPoll;
+      'api::scorer.scorer': ApiScorerScorer;
+      'api::season.season': ApiSeasonSeason;
       'api::shop-item.shop-item': ApiShopItemShopItem;
+      'api::standing.standing': ApiStandingStanding;
       'api::story.story': ApiStoryStory;
       'api::team-page.team-page': ApiTeamPageTeamPage;
+      'api::video.video': ApiVideoVideo;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;
       'plugin::i18n.locale': PluginI18NLocale;

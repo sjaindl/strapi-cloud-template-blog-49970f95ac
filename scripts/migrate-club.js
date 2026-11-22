@@ -40,6 +40,13 @@ const germanDateToIso = (value) => {
 
 const nameKey = (entry) => `${entry.firstName.trim()}|${entry.lastName.trim()}`;
 
+/** Former players the PHP player list does not contain, but who scored in the goal videos. */
+const EXTRA_PLAYERS = [
+  { firstName: 'Florian', lastName: 'Schriebl' },
+  { firstName: 'Herbert', lastName: 'Kohlberger' },
+  { firstName: 'Markus', lastName: 'Sackl' },
+];
+
 runMigration(async () => {
   const args = parseArgs(['exports', 'images'], ['images-url', 'squad-as-of']);
   const source = (endpoint) => readSource(path.join(args.exports, `${endpoint}.json`));
@@ -68,6 +75,9 @@ runMigration(async () => {
       }
     );
     counter.add('player', result);
+  }
+  for (const player of EXTRA_PLAYERS) {
+    counter.add('player', await upsert('api::player.player', player, { ...player, status: 'Ehemalig' }));
   }
 
   // The squad list date was shown as a fixed "Stand 12/2025" so far.

@@ -1,0 +1,65 @@
+{
+  "kind": "collectionType",
+  "collectionName": "standings",
+  "info": {
+    "singularName": "standing",
+    "pluralName": "standings",
+    "displayName": "Tabelle",
+    "description": "Eine Zeile der Meisterschaftstabelle."
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "season": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::season.season",
+      "inversedBy": "standings"
+    },
+    "place": {
+      "type": "integer",
+      "required": true,
+      "min": 1
+    },
+    "team": {
+      "type": "string",
+      "required": true
+    },
+    "games": {
+      "type": "integer",
+      "default": 0,
+      "min": 0
+    },
+    "wins": {
+      "type": "integer",
+      "default": 0,
+      "min": 0
+    },
+    "draws": {
+      "type": "integer",
+      "default": 0,
+      "min": 0
+    },
+    "losses": {
+      "type": "integer",
+      "default": 0,
+      "min": 0
+    },
+    "goalsFor": {
+      "type": "integer",
+      "default": 0,
+      "min": 0
+    },
+    "goalsAgainst": {
+      "type": "integer",
+      "default": 0,
+      "min": 0
+    },
+    "points": {
+      "type": "integer",
+      "default": 0
+    }
+  }
+}

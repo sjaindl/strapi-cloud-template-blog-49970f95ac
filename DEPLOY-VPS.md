@@ -141,6 +141,8 @@ runs the selected areas in production mode and always starts the server again �
 ./migrate-to-strapi.sh --strapi-dir ~/strapi --images <webroot>/assets/images club   # ~160 images
 ./migrate-to-strapi.sh --strapi-dir ~/strapi --images <webroot>/assets/images fanshop
 ./migrate-to-strapi.sh --strapi-dir ~/strapi --images <webroot>/assets/images --documents <webroot>/assets/documents documents
+./migrate-to-strapi.sh --strapi-dir ~/strapi --images <webroot>/assets/images championship   # after club (players)
+./migrate-to-strapi.sh --strapi-dir ~/strapi --images <webroot>/assets/images videos   # after club + championship
 ./migrate-to-strapi.sh --strapi-dir ~/strapi --images <webroot>/assets/images   # all areas
 ./migrate-to-strapi.sh --list                                                   # available areas
 ```
@@ -156,6 +158,14 @@ pm2 restart strapi-hvtdp
 
 Without it, protected documents cannot be downloaded (the endpoint answers 500 and logs an error). After the
 website uses Strapi for documents, `checkPasswordValid.php` is no longer needed.
+
+**Videos & voting:** the goal videos are attached to the championship matches, so run `videos` after `club`
+and `championship` (it creates matches for older seasons and events, and fills in missing match dates).
+Votes are cast via `POST /api/poll-options/:documentId/vote` (open votings only, at most 5 votes per IP and
+voting per hour; `IS_PROXIED=true` is needed so the limit sees the visitor's IP, not nginx). The vote counts
+are only visible in the admin. Until the new website is deployed, votes still go to the PHP endpoints: run
+`videos` once more right before deploying the website, and **never again afterwards** — a re-run resets the
+vote counts to the PHP numbers.
 
 Check the area's endpoint (e.g. `curl https://cms.hvtdpstainz.at/api/announcement`) before deploying the
 website build that uses it — or run the area's folder of the Postman collection in the website repo

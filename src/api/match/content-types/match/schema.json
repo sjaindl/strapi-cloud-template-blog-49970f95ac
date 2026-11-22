@@ -1,0 +1,79 @@
+{
+  "kind": "collectionType",
+  "collectionName": "matches",
+  "info": {
+    "singularName": "match",
+    "pluralName": "matches",
+    "displayName": "Spiel",
+    "description": "Spiele mit Ergebnis, Torschützen und Videos. Ohne Ergebnis gilt ein Spiel als noch nicht gespielt. Veranstaltungen (z. B. Entenrennen) haben den Bewerb \"Event\" und einen Titel statt Mannschaften."
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "season": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::season.season"
+    },
+    "competition": {
+      "type": "enumeration",
+      "enum": [
+        "Meisterschaft",
+        "Cup",
+        "Testspiel",
+        "Event"
+      ],
+      "default": "Meisterschaft",
+      "required": true
+    },
+    "round": {
+      "type": "integer",
+      "min": 1
+    },
+    "stage": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string"
+    },
+    "date": {
+      "type": "date"
+    },
+    "time": {
+      "type": "time"
+    },
+    "venue": {
+      "type": "string"
+    },
+    "homeTeam": {
+      "type": "string"
+    },
+    "awayTeam": {
+      "type": "string"
+    },
+    "homeScore": {
+      "type": "integer",
+      "min": 0
+    },
+    "awayScore": {
+      "type": "integer",
+      "min": 0
+    },
+    "additionalInfo": {
+      "type": "string"
+    },
+    "goals": {
+      "type": "component",
+      "repeatable": true,
+      "component": "match.goal"
+    },
+    "videos": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::video.video",
+      "mappedBy": "match"
+    }
+  }
+}
