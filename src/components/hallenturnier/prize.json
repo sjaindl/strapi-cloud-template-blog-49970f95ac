@@ -1,0 +1,15 @@
+{
+  "collectionName": "components_hallenturnier_prizes",
+  "info": {
+    "displayName": "Preis",
+    "icon": "trophy",
+    "description": "Ein Preis des Hallenturniers, z. B. \"Pokal für die besten 8 Mannschaften\"."
+  },
+  "options": {},
+  "attributes": {
+    "text": {
+      "type": "string",
+      "required": true
+    }
+  }
+}

@@ -90,6 +90,11 @@ const TYPES = {
     populate: {},
     title: (album) => withDate(join([album.year, album.name]), album.date),
   },
+  // "Adventkalender 2023 · Tor-Adventkalender"
+  'api::advent-calendar.advent-calendar': {
+    populate: {},
+    title: (calendar) => join([`Adventkalender ${calendar.year}`, calendar.title]),
+  },
   'api::scorer.scorer': {
     populate: { season: true, player: true },
     title: (scorer) => join([season(scorer.season), `${fullName(scorer.player) ?? scorer.name} (${scorer.goals} ${scorer.goals === 1 ? 'Tor' : 'Tore'})`]),

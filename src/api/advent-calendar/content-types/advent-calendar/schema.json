@@ -1,0 +1,41 @@
+{
+  "kind": "collectionType",
+  "collectionName": "advent_calendars",
+  "info": {
+    "singularName": "advent-calendar",
+    "pluralName": "advent-calendars",
+    "displayName": "Adventkalender",
+    "description": "Online-Adventkalender eines Jahres mit 24 Türchen (Vorschaubild + Video). Die Türchen öffnen sich im Dezember des Jahres Tag für Tag."
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "year": {
+      "type": "string",
+      "required": true,
+      "unique": true,
+      "regex": "^\\d{4}$"
+    },
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "lead": {
+      "type": "text"
+    },
+    "note": {
+      "type": "text"
+    },
+    "doors": {
+      "type": "component",
+      "repeatable": true,
+      "component": "advent.door"
+    },
+    "adminTitle": {
+      "type": "string",
+      "private": true
+    }
+  }
+}

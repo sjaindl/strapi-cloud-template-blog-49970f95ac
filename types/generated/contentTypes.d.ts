@@ -509,6 +509,43 @@ export interface ApiAboutAbout extends Struct.SingleTypeSchema {
   };
 }
 
+export interface ApiAdventCalendarAdventCalendar
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'advent_calendars';
+  info: {
+    description: 'Online-Adventkalender eines Jahres mit 24 T\u00FCrchen (Vorschaubild + Video). Die T\u00FCrchen \u00F6ffnen sich im Dezember des Jahres Tag f\u00FCr Tag.';
+    displayName: 'Adventkalender';
+    pluralName: 'advent-calendars';
+    singularName: 'advent-calendar';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    adminTitle: Schema.Attribute.String & Schema.Attribute.Private;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    doors: Schema.Attribute.Component<'advent.door', true>;
+    lead: Schema.Attribute.Text;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::advent-calendar.advent-calendar'
+    > &
+      Schema.Attribute.Private;
+    note: Schema.Attribute.Text;
+    publishedAt: Schema.Attribute.DateTime;
+    title: Schema.Attribute.String & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    year: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique;
+  };
+}
+
 export interface ApiAlbumAlbum extends Struct.CollectionTypeSchema {
   collectionName: 'albums';
   info: {
@@ -1002,6 +1039,89 @@ export interface ApiGlobalGlobal extends Struct.SingleTypeSchema {
     publishedAt: Schema.Attribute.DateTime;
     siteDescription: Schema.Attribute.Text & Schema.Attribute.Required;
     siteName: Schema.Attribute.String & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiHallenturnierRegistrationHallenturnierRegistration
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'hallenturnier_registrations';
+  info: {
+    description: 'Anmeldungen \u00FCber das Formular auf der Website (der Verein und die angemeldete Person bekommen je eine E-Mail).';
+    displayName: 'Hallenturnier-Anmeldung';
+    pluralName: 'hallenturnier-registrations';
+    singularName: 'hallenturnier-registration';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    edition: Schema.Attribute.String;
+    email: Schema.Attribute.Email & Schema.Attribute.Required;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::hallenturnier-registration.hallenturnier-registration'
+    > &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+    publishedAt: Schema.Attribute.DateTime;
+    teamName: Schema.Attribute.String & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiHallenturnierHallenturnier extends Struct.SingleTypeSchema {
+  collectionName: 'hallenturniers';
+  info: {
+    description: 'Das aktuelle Stainzer Hallenturnier (j\u00E4hrlich aktualisieren). Die Anmeldung schlie\u00DFt nach dem Anmeldeschluss automatisch oder wenn "Anmeldung offen" ausgeschaltet wird.';
+    displayName: 'Hallenturnier';
+    pluralName: 'hallenturniers';
+    singularName: 'hallenturnier';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    bankRecipient: Schema.Attribute.String;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    date: Schema.Attribute.Date & Schema.Attribute.Required;
+    dateHint: Schema.Attribute.String;
+    entryFee: Schema.Attribute.Decimal &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 0;
+        },
+        number
+      >;
+    format: Schema.Attribute.String;
+    iban: Schema.Attribute.String;
+    image: Schema.Attribute.Media<'images'>;
+    lastEditionAlbum: Schema.Attribute.Relation<'oneToOne', 'api::album.album'>;
+    lead: Schema.Attribute.Text;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::hallenturnier.hallenturnier'
+    > &
+      Schema.Attribute.Private;
+    location: Schema.Attribute.String;
+    paymentReference: Schema.Attribute.String;
+    prizes: Schema.Attribute.Component<'hallenturnier.prize', true>;
+    publishedAt: Schema.Attribute.DateTime;
+    registrationDeadline: Schema.Attribute.Date;
+    registrationOpen: Schema.Attribute.Boolean &
+      Schema.Attribute.DefaultTo<true>;
+    title: Schema.Attribute.String & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -2167,6 +2287,7 @@ declare module '@strapi/strapi' {
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'admin::user': AdminUser;
       'api::about.about': ApiAboutAbout;
+      'api::advent-calendar.advent-calendar': ApiAdventCalendarAdventCalendar;
       'api::album.album': ApiAlbumAlbum;
       'api::announcement.announcement': ApiAnnouncementAnnouncement;
       'api::article.article': ApiArticleArticle;
@@ -2179,6 +2300,8 @@ declare module '@strapi/strapi' {
       'api::event.event': ApiEventEvent;
       'api::gallery.gallery': ApiGalleryGallery;
       'api::global.global': ApiGlobalGlobal;
+      'api::hallenturnier-registration.hallenturnier-registration': ApiHallenturnierRegistrationHallenturnierRegistration;
+      'api::hallenturnier.hallenturnier': ApiHallenturnierHallenturnier;
       'api::match.match': ApiMatchMatch;
       'api::member.member': ApiMemberMember;
       'api::news-item.news-item': ApiNewsItemNewsItem;

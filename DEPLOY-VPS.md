@@ -144,6 +144,7 @@ runs the selected areas in production mode and always starts the server again ‚Ä
 ./migrate-to-strapi.sh --strapi-dir ~/strapi --images <webroot>/assets/images championship   # after club (players)
 ./migrate-to-strapi.sh --strapi-dir ~/strapi --images <webroot>/assets/images videos   # after club + championship
 ./migrate-to-strapi.sh --strapi-dir ~/strapi --images <webroot>/assets/images gallery   # ~2,900 photos, see below
+./migrate-to-strapi.sh --strapi-dir ~/strapi --images <webroot>/assets/images --videos <webroot>/assets/videos pages   # after gallery
 ./migrate-to-strapi.sh --strapi-dir ~/strapi --images <webroot>/assets/images   # all areas
 ./migrate-to-strapi.sh --list                                                   # available areas
 ```
@@ -172,6 +173,34 @@ each; plan for a longer run (about 8 minutes on a laptop, likely longer on the V
 photo files are missing are skipped and listed at the end (3 albums from 2022/2023 have no files anywhere: Kleinfeldturnier Stainz 2022, Stra√üenstockturnier ESV Zeierling 2023, 2. Vereinswandertag 2023);
 copy the originals into `<webroot>/assets/images/<legacy folder>` and re-run `gallery` to add them. Old album
 links (`/gallery/<year>/<slug>`) keep working, the slugs are the same.
+
+**Pages (Hallenturnier, Advent):** `pages` fills the Hallenturnier entry (link to last year's album, so run
+it after `gallery`) and uploads the Advent calendars 2021/2023 (48 posters, 48 videos, about 410 MB) into
+media folders "Adventkalender/<year>". Every year: update the single type "Hallenturnier" (title, date,
+deadline, fee, reference, album link; the registration closes automatically after the deadline or when
+"Anmeldung offen" is switched off) and, for a new calendar, create an "Adventkalender" entry with 24 doors.
+
+**Hallenturnier registration mails:** the form posts to `POST /api/hallenturnier-registrations/register`. Strapi
+stores the registration (admin: "Hallenturnier-Anmeldung") and sends one mail to the club and a confirmation
+with date, place, fee and bank details to the registrant. Add the SMTP account to `~/strapi/.env` and restart
+(for GMX: `mail.gmx.net`, port 587, the full address as user):
+
+```bash
+cat >> ~/strapi/.env <<'ENV'
+SMTP_HOST=mail.gmx.net
+SMTP_PORT=587
+SMTP_USER=hvtdpstainz@gmx.at
+SMTP_PASS=<password>
+MAIL_FROM=HV TDP Stainz <hvtdpstainz@gmx.at>
+REGISTRATION_MAIL_TO=hvtdpstainz@gmx.at
+REGISTRATION_MAIL_CC=<optional copy, e.g. your own address>
+ENV
+pm2 restart strapi-hvtdp
+```
+
+Without `SMTP_HOST` registrations are still stored, but the mails are only written to the log
+(`pm2 logs strapi-hvtdp`). GMX may require enabling "POP3/IMAP/SMTP access" in the mailbox settings first.
+`postHallenturnier.php` is no longer used by the website.
 
 **Videos & voting:** the goal videos are attached to the championship matches, so run `videos` after `club`
 and `championship` (it creates matches for older seasons and events, and fills in missing match dates).

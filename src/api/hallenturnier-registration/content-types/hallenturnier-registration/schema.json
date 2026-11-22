@@ -1,0 +1,31 @@
+{
+  "kind": "collectionType",
+  "collectionName": "hallenturnier_registrations",
+  "info": {
+    "singularName": "hallenturnier-registration",
+    "pluralName": "hallenturnier-registrations",
+    "displayName": "Hallenturnier-Anmeldung",
+    "description": "Anmeldungen über das Formular auf der Website (der Verein und die angemeldete Person bekommen je eine E-Mail)."
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "teamName": {
+      "type": "string",
+      "required": true
+    },
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "email": {
+      "type": "email",
+      "required": true
+    },
+    "edition": {
+      "type": "string"
+    }
+  }
+}

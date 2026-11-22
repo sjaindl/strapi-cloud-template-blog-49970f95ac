@@ -1,0 +1,27 @@
+{
+  "collectionName": "components_advent_doors",
+  "info": {
+    "displayName": "Türchen",
+    "icon": "gift",
+    "description": "Ein Türchen des Adventkalenders: Tag (1–24), Vorschaubild und Video."
+  },
+  "options": {},
+  "attributes": {
+    "day": {
+      "type": "integer",
+      "required": true,
+      "min": 1,
+      "max": 24
+    },
+    "poster": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images"]
+    },
+    "video": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["videos"]
+    }
+  }
+}

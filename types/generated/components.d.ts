@@ -1,5 +1,39 @@
 import type { Schema, Struct } from '@strapi/strapi';
 
+export interface AdventDoor extends Struct.ComponentSchema {
+  collectionName: 'components_advent_doors';
+  info: {
+    description: 'Ein T\u00FCrchen des Adventkalenders: Tag (1\u201324), Vorschaubild und Video.';
+    displayName: 'T\u00FCrchen';
+    icon: 'gift';
+  };
+  attributes: {
+    day: Schema.Attribute.Integer &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 24;
+          min: 1;
+        },
+        number
+      >;
+    poster: Schema.Attribute.Media<'images'>;
+    video: Schema.Attribute.Media<'videos'>;
+  };
+}
+
+export interface HallenturnierPrize extends Struct.ComponentSchema {
+  collectionName: 'components_hallenturnier_prizes';
+  info: {
+    description: 'Ein Preis des Hallenturniers, z. B. "Pokal f\u00FCr die besten 8 Mannschaften".';
+    displayName: 'Preis';
+    icon: 'trophy';
+  };
+  attributes: {
+    text: Schema.Attribute.String & Schema.Attribute.Required;
+  };
+}
+
 export interface MatchGoal extends Struct.ComponentSchema {
   collectionName: 'components_match_goals';
   info: {
@@ -124,6 +158,8 @@ export interface ShopOptionGroup extends Struct.ComponentSchema {
 declare module '@strapi/strapi' {
   export namespace Public {
     export interface ComponentSchemas {
+      'advent.door': AdventDoor;
+      'hallenturnier.prize': HallenturnierPrize;
       'match.goal': MatchGoal;
       'shared.media': SharedMedia;
       'shared.quote': SharedQuote;

@@ -1,0 +1,73 @@
+{
+  "kind": "singleType",
+  "collectionName": "hallenturniers",
+  "info": {
+    "singularName": "hallenturnier",
+    "pluralName": "hallenturniers",
+    "displayName": "Hallenturnier",
+    "description": "Das aktuelle Stainzer Hallenturnier (jährlich aktualisieren). Die Anmeldung schließt nach dem Anmeldeschluss automatisch oder wenn \"Anmeldung offen\" ausgeschaltet wird."
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "lead": {
+      "type": "text"
+    },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "date": {
+      "type": "date",
+      "required": true
+    },
+    "dateHint": {
+      "type": "string"
+    },
+    "location": {
+      "type": "string"
+    },
+    "format": {
+      "type": "string"
+    },
+    "entryFee": {
+      "type": "decimal",
+      "min": 0
+    },
+    "registrationDeadline": {
+      "type": "date"
+    },
+    "registrationOpen": {
+      "type": "boolean",
+      "default": true
+    },
+    "prizes": {
+      "type": "component",
+      "repeatable": true,
+      "component": "hallenturnier.prize"
+    },
+    "bankRecipient": {
+      "type": "string"
+    },
+    "iban": {
+      "type": "string"
+    },
+    "paymentReference": {
+      "type": "string"
+    },
+    "lastEditionAlbum": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::album.album"
+    }
+  }
+}
