@@ -1,0 +1,55 @@
+{
+  "kind": "collectionType",
+  "collectionName": "documents",
+  "info": {
+    "singularName": "document",
+    "pluralName": "documents",
+    "displayName": "Dokument",
+    "description": "Downloads auf der Dokumente-Seite. Geschützte Dokumente gibt es nur mit dem Mitglieder-Passwort (DOCUMENTS_PASSWORD am Server). Der Slug verknüpft feste Dokumente mit der Website (z. B. beitrittserklaerung)."
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "slug": {
+      "type": "string",
+      "unique": true,
+      "regex": "^[a-z0-9-]+$"
+    },
+    "date": {
+      "type": "date"
+    },
+    "category": {
+      "type": "enumeration",
+      "enum": [
+        "Allgemein",
+        "Turnierergebnisse",
+        "Protokolle"
+      ],
+      "default": "Allgemein",
+      "required": true
+    },
+    "file": {
+      "type": "media",
+      "multiple": false,
+      "required": true,
+      "allowedTypes": [
+        "files"
+      ]
+    },
+    "protected": {
+      "type": "boolean",
+      "default": false,
+      "required": true
+    },
+    "order": {
+      "type": "integer",
+      "default": 0
+    }
+  }
+}

@@ -140,9 +140,22 @@ runs the selected areas in production mode and always starts the server again â€
 ./migrate-to-strapi.sh --strapi-dir ~/strapi --images <webroot>/assets/images announcement
 ./migrate-to-strapi.sh --strapi-dir ~/strapi --images <webroot>/assets/images club   # ~160 images
 ./migrate-to-strapi.sh --strapi-dir ~/strapi --images <webroot>/assets/images fanshop
+./migrate-to-strapi.sh --strapi-dir ~/strapi --images <webroot>/assets/images --documents <webroot>/assets/documents documents
 ./migrate-to-strapi.sh --strapi-dir ~/strapi --images <webroot>/assets/images   # all areas
 ./migrate-to-strapi.sh --list                                                   # available areas
 ```
+
+**Documents:** protected documents (minutes, statutes) are only delivered by
+`POST /api/documents/:documentId/download` with the members' password. Before migrating the documents, add
+it to `~/strapi/.env` (the same password as `$docpass` in the PHP `constants.php`) and restart:
+
+```bash
+echo 'DOCUMENTS_PASSWORD=<members password>' >> ~/strapi/.env
+pm2 restart strapi-hvtdp
+```
+
+Without it, protected documents cannot be downloaded (the endpoint answers 500 and logs an error). After the
+website uses Strapi for documents, `checkPasswordValid.php` is no longer needed.
 
 Check the area's endpoint (e.g. `curl https://cms.hvtdpstainz.at/api/announcement`) before deploying the
 website build that uses it â€” or run the area's folder of the Postman collection in the website repo

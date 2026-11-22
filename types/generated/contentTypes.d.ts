@@ -681,6 +681,47 @@ export interface ApiCategoryCategory extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiDocumentDocument extends Struct.CollectionTypeSchema {
+  collectionName: 'documents';
+  info: {
+    description: 'Downloads auf der Dokumente-Seite. Gesch\u00FCtzte Dokumente gibt es nur mit dem Mitglieder-Passwort (DOCUMENTS_PASSWORD am Server). Der Slug verkn\u00FCpft feste Dokumente mit der Website (z. B. beitrittserklaerung).';
+    displayName: 'Dokument';
+    pluralName: 'documents';
+    singularName: 'document';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    category: Schema.Attribute.Enumeration<
+      ['Allgemein', 'Turnierergebnisse', 'Protokolle']
+    > &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'Allgemein'>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    date: Schema.Attribute.Date;
+    file: Schema.Attribute.Media<'files'> & Schema.Attribute.Required;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::document.document'
+    > &
+      Schema.Attribute.Private;
+    order: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    protected: Schema.Attribute.Boolean &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<false>;
+    publishedAt: Schema.Attribute.DateTime;
+    slug: Schema.Attribute.String & Schema.Attribute.Unique;
+    title: Schema.Attribute.String & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiDonationDonation extends Struct.CollectionTypeSchema {
   collectionName: 'donations';
   info: {
@@ -1760,6 +1801,7 @@ declare module '@strapi/strapi' {
       'api::author.author': ApiAuthorAuthor;
       'api::board-member.board-member': ApiBoardMemberBoardMember;
       'api::category.category': ApiCategoryCategory;
+      'api::document.document': ApiDocumentDocument;
       'api::donation.donation': ApiDonationDonation;
       'api::event-category.event-category': ApiEventCategoryEventCategory;
       'api::event.event': ApiEventEvent;
