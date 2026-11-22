@@ -129,15 +129,31 @@ function createMediaUploader({ images, imagesUrl }) {
     mimetype: mime.lookup(name) || 'application/octet-stream',
   });
 
-  const upload = async (filePath, name, caption) => {
+  const upload = async (filePath, name, caption, folder) => {
     const [uploaded] = await strapi
       .plugin('upload')
       .service('upload')
       .upload({
         files: fileData(filePath, name),
-        data: { fileInfo: { alternativeText: caption || name, caption: caption || name, name } },
+        data: { fileInfo: { alternativeText: caption || name, caption: caption || name, name, ...(folder ? { folder } : {}) } },
       });
     return uploaded;
+  };
+
+  /** Id of the media library folder "A/B/C" (created on first use). */
+  const folderIds = new Map();
+  const folderId = async (folderPath) => {
+    if (!folderPath) return null;
+    if (folderIds.has(folderPath)) return folderIds.get(folderPath);
+    let parent = null;
+    for (const name of folderPath.split('/')) {
+      const existing = await strapi.db.query('plugin::upload.folder').findOne({
+        where: { name, parent: parent ? { id: parent } : { id: { $null: true } } },
+      });
+      parent = (existing ?? (await strapi.plugin('upload').service('folder').create({ name, parent }))).id;
+    }
+    folderIds.set(folderPath, parent);
+    return parent;
   };
 
   const download = async (relativePath) => {
@@ -164,10 +180,11 @@ function createMediaUploader({ images, imagesUrl }) {
   /**
    * Returns the media file for a legacy path (uploading it on first use) or null if it does not exist.
    * `label` identifies the entry in the "missing" report; `caption` becomes alt text and caption.
-   * Files are named after their legacy relative path with "/" replaced by "_" (Strapi does not allow
-   * slashes), e.g. "gallery_boccia_2026_01.jpg", which keeps generic names like "01.jpg" apart.
+   * Files are named after their legacy relative path with "/" (and other characters Strapi does not allow)
+   * replaced by "_", e.g. "gallery_boccia_2026_01.jpg", which keeps generic names like "01.jpg" apart.
+   * `folder` ("Galerie/2026/Boccia") puts new uploads into that media library folder.
    */
-  async function get(legacyPath, label, caption) {
+  async function get(legacyPath, label, caption, { folder } = {}) {
     if (!legacyPath || !legacyPath.trim()) {
       return null;
     }
@@ -186,16 +203,17 @@ function createMediaUploader({ images, imagesUrl }) {
       return null;
     }
 
-    const name = relativePath.replace(/\//g, '_');
+    // Characters Strapi rejects in file names ("99*100.JPG") become "_" as well.
+    const name = relativePath.replace(/[\\/:*?"<>|]/g, '_');
     let file = await strapi.db.query('plugin::upload.file').findOne({ where: { name } });
     if (file) {
       stats.reused++;
     } else {
       try {
-        file = await upload(filePath, name, caption);
+        file = await upload(filePath, name, caption, await folderId(folder));
       } catch (error) {
         try {
-          file = await upload(await repair(filePath, relativePath), name, caption);
+          file = await upload(await repair(filePath, relativePath), name, caption, await folderId(folder));
           stats.repaired.push(`${label}: ${legacyPath}`);
         } catch {
           stats.missing.push(`${label}: ${legacyPath} (${error.message})`);

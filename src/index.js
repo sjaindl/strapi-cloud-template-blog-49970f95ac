@@ -2,6 +2,14 @@
 const bootstrap = require("./bootstrap");
 const adminTitles = require('./admin-titles');
 
+/** "4. Boccia Turnier" → "4-boccia-turnier" (characters other than a-z/0-9 become "-", as in the old gallery links). */
+const albumSlug = (name) =>
+  name
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '') || 'album';
+
 module.exports = {
   /**
    * An asynchronous register function that runs before
@@ -26,6 +34,15 @@ module.exports = {
         }
       }
 
+      return next();
+    });
+
+    // Albums: an empty slug is taken from the name (same rule the website used for its album links).
+    strapi.documents.use(async (context, next) => {
+      const data = context.params?.data;
+      if (context.uid === 'api::album.album' && ['create', 'update'].includes(context.action) && data && data.name && !data.slug) {
+        context.params.data = { ...data, slug: albumSlug(data.name) };
+      }
       return next();
     });
 

@@ -1,0 +1,50 @@
+{
+  "kind": "collectionType",
+  "collectionName": "albums",
+  "info": {
+    "singularName": "album",
+    "pluralName": "albums",
+    "displayName": "Fotoalbum",
+    "description": "Fotoalbum der Galerie. Der Slug (leer lassen = aus dem Namen) erscheint mit dem Jahr in der URL; das Titelbild ist sonst das erste Foto."
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "slug": {
+      "type": "string",
+      "regex": "^[a-z0-9-]+$"
+    },
+    "year": {
+      "type": "string",
+      "required": true,
+      "regex": "^\\d{4}$"
+    },
+    "date": {
+      "type": "date"
+    },
+    "cover": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "photos": {
+      "type": "media",
+      "multiple": true,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "adminTitle": {
+      "type": "string",
+      "private": true
+    }
+  }
+}

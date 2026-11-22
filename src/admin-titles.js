@@ -85,6 +85,11 @@ const TYPES = {
     populate: { season: true },
     title: (row) => join([season(row.season), `${row.place}. ${row.team}`]),
   },
+  // "2026 · 4. Boccia Turnier (22.08.2026)"
+  'api::album.album': {
+    populate: {},
+    title: (album) => withDate(join([album.year, album.name]), album.date),
+  },
   'api::scorer.scorer': {
     populate: { season: true, player: true },
     title: (scorer) => join([season(scorer.season), `${fullName(scorer.player) ?? scorer.name} (${scorer.goals} ${scorer.goals === 1 ? 'Tor' : 'Tore'})`]),

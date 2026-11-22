@@ -143,6 +143,7 @@ runs the selected areas in production mode and always starts the server again �
 ./migrate-to-strapi.sh --strapi-dir ~/strapi --images <webroot>/assets/images --documents <webroot>/assets/documents documents
 ./migrate-to-strapi.sh --strapi-dir ~/strapi --images <webroot>/assets/images championship   # after club (players)
 ./migrate-to-strapi.sh --strapi-dir ~/strapi --images <webroot>/assets/images videos   # after club + championship
+./migrate-to-strapi.sh --strapi-dir ~/strapi --images <webroot>/assets/images gallery   # ~2,900 photos, see below
 ./migrate-to-strapi.sh --strapi-dir ~/strapi --images <webroot>/assets/images   # all areas
 ./migrate-to-strapi.sh --list                                                   # available areas
 ```
@@ -164,6 +165,13 @@ read-only field "Titel" (`adminTitle`, not in the public API) that the admin sho
 relation picker (e.g. "2026/27 · 2. Runde · HV TDP Stainz – STT Pichler 3:3 (12.09.2026)"). It is updated on
 every save (also of related entries) and filled in for entries without one when Strapi starts
 (`src/admin-titles.js`).
+
+**Gallery:** the first `gallery` run uploads about 2,900 photos (1.2 GB) and lets Strapi create 4 sizes of
+each; plan for a longer run (about 8 minutes on a laptop, likely longer on the VPS) and about 1 GB more disk in
+`~/strapi/public/uploads`. The photos land in media library folders "Galerie/<year>/<album>". Albums whose
+photo files are missing are skipped and listed at the end (3 albums from 2022/2023 have no files anywhere: Kleinfeldturnier Stainz 2022, Straßenstockturnier ESV Zeierling 2023, 2. Vereinswandertag 2023);
+copy the originals into `<webroot>/assets/images/<legacy folder>` and re-run `gallery` to add them. Old album
+links (`/gallery/<year>/<slug>`) keep working, the slugs are the same.
 
 **Videos & voting:** the goal videos are attached to the championship matches, so run `videos` after `club`
 and `championship` (it creates matches for older seasons and events, and fills in missing match dates).
