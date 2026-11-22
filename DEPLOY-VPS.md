@@ -121,6 +121,35 @@ Public role read access to `news-item`.
 Check: `curl 'https://cms.hvtdpstainz.at/api/news-items?pagination[pageSize]=1'` should report
 `"total":233` (or the current count).
 
+## 5b. Migrate the club data (page by page)
+
+The remaining website data moves from the PHP endpoints to Strapi one area at a time. Every area has a
+script in `scripts/migrate-<area>.js` (shared helpers: `scripts/lib/migrate-utils.js`). Each script:
+
+- reads a JSON export of the legacy PHP endpoint(s),
+- uploads referenced images to the media library (once; files are named after their legacy path, e.g.
+  `gallery/boccia_2026/01.jpg`, and reused on re-runs),
+- creates or updates the entries (safe to re-run) and grants the Public role read access.
+
+Deploy the new content types first (pull, `npm run build`, `pm2 restart strapi-hvtdp`), then run the
+migration script from the website repo (`hvtdp/scripts/migrate-to-strapi.sh`, copy it to the VPS if the
+website repo is not checked out there). It downloads the PHP JSON, checks it, stops `strapi-hvtdp` (pm2),
+runs the selected areas in production mode and always starts the server again — also when a step fails:
+
+```bash
+./migrate-to-strapi.sh --strapi-dir ~/strapi --images <webroot>/assets/images announcement
+./migrate-to-strapi.sh --strapi-dir ~/strapi --images <webroot>/assets/images   # all areas
+./migrate-to-strapi.sh --list                                                   # available areas
+```
+
+Check the area's endpoint (e.g. `curl https://cms.hvtdpstainz.at/api/announcement`) before deploying the
+website build that uses it — or run the area's folder of the Postman collection in the website repo
+(`hvtdp/postman/`) with the `HV TDP CMS – production` environment (every request has tests for status and response shape). Further
+areas are added here and to the collection as they are migrated.
+
+Disk space: the images are about 1.5 GB; Strapi additionally stores thumbnail/small/medium/large
+versions (configured in `config/plugins.js`), so plan for roughly 3 GB in `public/uploads`.
+
 ## 6. Backups
 
 Add these to the existing backup routine:

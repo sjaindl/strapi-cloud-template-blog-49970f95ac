@@ -67,18 +67,18 @@ function parseArgs() {
 }
 
 async function setPublicPermissions(controller, actions) {
-  const publicRole = await strapi.query('plugin::users-permissions.role').findOne({
+  const publicRole = await strapi.db.query('plugin::users-permissions.role').findOne({
     where: { type: 'public' },
   });
 
   for (const action of actions) {
     const fullAction = `api::${controller}.${controller}.${action}`;
-    const existing = await strapi.query('plugin::users-permissions.permission').findOne({
+    const existing = await strapi.db.query('plugin::users-permissions.permission').findOne({
       where: { action: fullAction, role: publicRole.id },
     });
 
     if (!existing) {
-      await strapi.query('plugin::users-permissions.permission').create({
+      await strapi.db.query('plugin::users-permissions.permission').create({
         data: { action: fullAction, role: publicRole.id },
       });
     }
@@ -169,7 +169,7 @@ async function getOrUploadImage(legacyPath, { images: imagesDir, imagesUrl }, ne
   }
 
   const name = path.basename(relativePath);
-  let file = await strapi.query('plugin::upload.file').findOne({ where: { name } });
+  let file = await strapi.db.query('plugin::upload.file').findOne({ where: { name } });
 
   if (file) {
     stats.reused++;

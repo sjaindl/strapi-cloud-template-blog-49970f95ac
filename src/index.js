@@ -97,7 +97,7 @@ module.exports = {
       console.log('Creating localized events...');
 
       // The demo image only exists in databases seeded from the template export.
-      const placeholderImage = await strapi.query('plugin::upload.file').findOne({ where: { id: 9 } });
+      const placeholderImage = await strapi.db.query('plugin::upload.file').findOne({ where: { id: 9 } });
       const placeholderImageId = placeholderImage ? placeholderImage.id : null;
 
       for (let i = 1; i <= 100; i++) {

@@ -1,0 +1,25 @@
+{
+  "kind": "singleType",
+  "collectionName": "announcements",
+  "info": {
+    "singularName": "announcement",
+    "pluralName": "announcements",
+    "displayName": "Ankündigung",
+    "description": "Hinweis-Leiste unter dem Header auf der Startseite (ersetzt den Ticker). Der Teil vor dem ersten \" – \" wird fett angezeigt."
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "text": {
+      "type": "string",
+      "maxLength": 300
+    },
+    "active": {
+      "type": "boolean",
+      "default": true,
+      "required": true
+    }
+  }
+}
