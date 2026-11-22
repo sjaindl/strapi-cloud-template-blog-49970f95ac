@@ -1,0 +1,19 @@
+{
+  "kind": "singleType",
+  "collectionName": "team_pages",
+  "info": {
+    "singularName": "team-page",
+    "pluralName": "team-pages",
+    "displayName": "Team-Seite",
+    "description": "Angaben zur Team-Seite."
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "squadAsOf": {
+      "type": "date"
+    }
+  }
+}

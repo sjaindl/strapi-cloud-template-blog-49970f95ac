@@ -616,6 +616,39 @@ export interface ApiAuthorAuthor extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiBoardMemberBoardMember extends Struct.CollectionTypeSchema {
+  collectionName: 'board_members';
+  info: {
+    description: 'Vorstandsmitglieder (\u00DCber uns), sortiert nach Reihenfolge.';
+    displayName: 'Vorstand';
+    pluralName: 'board-members';
+    singularName: 'board-member';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    firstName: Schema.Attribute.String & Schema.Attribute.Required;
+    function: Schema.Attribute.String & Schema.Attribute.Required;
+    image: Schema.Attribute.Media<'images'>;
+    lastName: Schema.Attribute.String & Schema.Attribute.Required;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::board-member.board-member'
+    > &
+      Schema.Attribute.Private;
+    order: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiCategoryCategory extends Struct.CollectionTypeSchema {
   collectionName: 'categories';
   info: {
@@ -642,6 +675,40 @@ export interface ApiCategoryCategory extends Struct.CollectionTypeSchema {
     name: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
     slug: Schema.Attribute.UID;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiDonationDonation extends Struct.CollectionTypeSchema {
+  collectionName: 'donations';
+  info: {
+    description: 'Matchballspenden mit Ball\u00FCbergabe-Foto und Ball.';
+    displayName: 'Matchballspende';
+    pluralName: 'donations';
+    singularName: 'donation';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    date: Schema.Attribute.Date & Schema.Attribute.Required;
+    description: Schema.Attribute.Text;
+    donator: Schema.Attribute.String & Schema.Attribute.Required;
+    game: Schema.Attribute.String;
+    image: Schema.Attribute.Media<'images'>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::donation.donation'
+    > &
+      Schema.Attribute.Private;
+    matchBallImage: Schema.Attribute.Media<'images'>;
+    publishedAt: Schema.Attribute.DateTime;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -868,6 +935,40 @@ export interface ApiGlobalGlobal extends Struct.SingleTypeSchema {
   };
 }
 
+export interface ApiMemberMember extends Struct.CollectionTypeSchema {
+  collectionName: 'members';
+  info: {
+    description: 'Vereinsmitglieder (Mitgliedschaft). "Seit" bestimmt den angezeigten Stand der Liste.';
+    displayName: 'Mitglied';
+    pluralName: 'members';
+    singularName: 'member';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    firstName: Schema.Attribute.String & Schema.Attribute.Required;
+    lastName: Schema.Attribute.String & Schema.Attribute.Required;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::member.member'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    since: Schema.Attribute.Date;
+    type: Schema.Attribute.Enumeration<['Aktiv', 'F\u00F6rdernd', 'Kids']> &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'Aktiv'>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiNewsItemNewsItem extends Struct.CollectionTypeSchema {
   collectionName: 'news_items';
   info: {
@@ -896,6 +997,92 @@ export interface ApiNewsItemNewsItem extends Struct.CollectionTypeSchema {
     newsId: Schema.Attribute.Integer & Schema.Attribute.Unique;
     publishedAt: Schema.Attribute.DateTime;
     title: Schema.Attribute.String & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiPappFanPappFan extends Struct.CollectionTypeSchema {
+  collectionName: 'papp_fans';
+  info: {
+    description: 'Hall of Papp-Fans, sortiert nach Reihenfolge.';
+    displayName: 'Papp-Fan';
+    pluralName: 'papp-fans';
+    singularName: 'papp-fan';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    image: Schema.Attribute.Media<'images'>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::papp-fan.papp-fan'
+    > &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+    order: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiPlayerPlayer extends Struct.CollectionTypeSchema {
+  collectionName: 'players';
+  info: {
+    description: 'Spieler des HV TDP Stainz. Status: Kader (Team-Seite), Aktiv (weitere aktive Mitglieder), Ehemalig (nur f\u00FCr Torsch\u00FCtzen/Voting).';
+    displayName: 'Spieler';
+    pluralName: 'players';
+    singularName: 'player';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    firstName: Schema.Attribute.String & Schema.Attribute.Required;
+    games: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 0;
+        },
+        number
+      > &
+      Schema.Attribute.DefaultTo<0>;
+    goals: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 0;
+        },
+        number
+      > &
+      Schema.Attribute.DefaultTo<0>;
+    image: Schema.Attribute.Media<'images'>;
+    jerseyNumber: Schema.Attribute.Integer;
+    lastName: Schema.Attribute.String & Schema.Attribute.Required;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::player.player'
+    > &
+      Schema.Attribute.Private;
+    memberSinceYear: Schema.Attribute.Integer;
+    position: Schema.Attribute.Enumeration<
+      ['Tormann', 'Verteidiger', 'Mittelfeld', 'St\u00FCrmer']
+    >;
+    publishedAt: Schema.Attribute.DateTime;
+    status: Schema.Attribute.Enumeration<['Kader', 'Aktiv', 'Ehemalig']> &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'Kader'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -951,6 +1138,35 @@ export interface ApiStoryStory extends Struct.CollectionTypeSchema {
         };
       }> &
       Schema.Attribute.DefaultTo<'story'>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiTeamPageTeamPage extends Struct.SingleTypeSchema {
+  collectionName: 'team_pages';
+  info: {
+    description: 'Angaben zur Team-Seite.';
+    displayName: 'Team-Seite';
+    pluralName: 'team-pages';
+    singularName: 'team-page';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::team-page.team-page'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    squadAsOf: Schema.Attribute.Date;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -1496,13 +1712,19 @@ declare module '@strapi/strapi' {
       'api::announcement.announcement': ApiAnnouncementAnnouncement;
       'api::article.article': ApiArticleArticle;
       'api::author.author': ApiAuthorAuthor;
+      'api::board-member.board-member': ApiBoardMemberBoardMember;
       'api::category.category': ApiCategoryCategory;
+      'api::donation.donation': ApiDonationDonation;
       'api::event-category.event-category': ApiEventCategoryEventCategory;
       'api::event.event': ApiEventEvent;
       'api::gallery.gallery': ApiGalleryGallery;
       'api::global.global': ApiGlobalGlobal;
+      'api::member.member': ApiMemberMember;
       'api::news-item.news-item': ApiNewsItemNewsItem;
+      'api::papp-fan.papp-fan': ApiPappFanPappFan;
+      'api::player.player': ApiPlayerPlayer;
       'api::story.story': ApiStoryStory;
+      'api::team-page.team-page': ApiTeamPageTeamPage;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;
       'plugin::i18n.locale': PluginI18NLocale;

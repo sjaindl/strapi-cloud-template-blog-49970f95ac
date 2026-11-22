@@ -1,0 +1,31 @@
+{
+  "kind": "collectionType",
+  "collectionName": "papp_fans",
+  "info": {
+    "singularName": "papp-fan",
+    "pluralName": "papp-fans",
+    "displayName": "Papp-Fan",
+    "description": "Hall of Papp-Fans, sortiert nach Reihenfolge."
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "order": {
+      "type": "integer",
+      "default": 0
+    },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images"
+      ]
+    }
+  }
+}

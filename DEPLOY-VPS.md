@@ -128,7 +128,7 @@ script in `scripts/migrate-<area>.js` (shared helpers: `scripts/lib/migrate-util
 
 - reads a JSON export of the legacy PHP endpoint(s),
 - uploads referenced images to the media library (once; files are named after their legacy path, e.g.
-  `gallery/boccia_2026/01.jpg`, and reused on re-runs),
+  `gallery_boccia_2026_01.jpg` for `gallery/boccia_2026/01.jpg`, and reused on re-runs),
 - creates or updates the entries (safe to re-run) and grants the Public role read access.
 
 Deploy the new content types first (pull, `npm run build`, `pm2 restart strapi-hvtdp`), then run the
@@ -138,6 +138,7 @@ runs the selected areas in production mode and always starts the server again â€
 
 ```bash
 ./migrate-to-strapi.sh --strapi-dir ~/strapi --images <webroot>/assets/images announcement
+./migrate-to-strapi.sh --strapi-dir ~/strapi --images <webroot>/assets/images club   # ~160 images
 ./migrate-to-strapi.sh --strapi-dir ~/strapi --images <webroot>/assets/images   # all areas
 ./migrate-to-strapi.sh --list                                                   # available areas
 ```

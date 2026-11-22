@@ -1,0 +1,37 @@
+{
+  "kind": "collectionType",
+  "collectionName": "members",
+  "info": {
+    "singularName": "member",
+    "pluralName": "members",
+    "displayName": "Mitglied",
+    "description": "Vereinsmitglieder (Mitgliedschaft). \"Seit\" bestimmt den angezeigten Stand der Liste."
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "firstName": {
+      "type": "string",
+      "required": true
+    },
+    "lastName": {
+      "type": "string",
+      "required": true
+    },
+    "type": {
+      "type": "enumeration",
+      "enum": [
+        "Aktiv",
+        "Fördernd",
+        "Kids"
+      ],
+      "default": "Aktiv",
+      "required": true
+    },
+    "since": {
+      "type": "date"
+    }
+  }
+}

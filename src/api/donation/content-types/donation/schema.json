@@ -1,0 +1,44 @@
+{
+  "kind": "collectionType",
+  "collectionName": "donations",
+  "info": {
+    "singularName": "donation",
+    "pluralName": "donations",
+    "displayName": "Matchballspende",
+    "description": "Matchballspenden mit Ballübergabe-Foto und Ball."
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "donator": {
+      "type": "string",
+      "required": true
+    },
+    "date": {
+      "type": "date",
+      "required": true
+    },
+    "game": {
+      "type": "string"
+    },
+    "description": {
+      "type": "text"
+    },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "matchBallImage": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images"
+      ]
+    }
+  }
+}
