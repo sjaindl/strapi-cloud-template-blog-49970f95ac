@@ -74,6 +74,10 @@
       "relation": "oneToMany",
       "target": "api::video.video",
       "mappedBy": "match"
+    },
+    "adminTitle": {
+      "type": "string",
+      "private": true
     }
   }
 }

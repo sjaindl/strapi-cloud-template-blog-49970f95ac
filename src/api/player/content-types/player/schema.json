@@ -61,6 +61,10 @@
       "allowedTypes": [
         "images"
       ]
+    },
+    "adminTitle": {
+      "type": "string",
+      "private": true
     }
   }
 }

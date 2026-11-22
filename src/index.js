@@ -1,5 +1,6 @@
 'use strict';
 const bootstrap = require("./bootstrap");
+const adminTitles = require('./admin-titles');
 
 module.exports = {
   /**
@@ -27,6 +28,9 @@ module.exports = {
 
       return next();
     });
+
+    // Readable titles for relations in the admin (matches, videos, voting options, …).
+    strapi.documents.use(adminTitles.middleware(strapi));
   },
 
   /**
@@ -37,6 +41,8 @@ module.exports = {
    * run jobs, or perform some special logic.
    */
   async bootstrap({ strapi }) {
+    await adminTitles.setup(strapi);
+
     let existingCats = await strapi.documents('api::event-category.event-category').findMany({
       limit: 2,
     });

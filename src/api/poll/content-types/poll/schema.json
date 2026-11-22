@@ -37,6 +37,10 @@
       "relation": "oneToMany",
       "target": "api::poll-option.poll-option",
       "mappedBy": "poll"
+    },
+    "adminTitle": {
+      "type": "string",
+      "private": true
     }
   }
 }

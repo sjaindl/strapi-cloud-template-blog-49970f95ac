@@ -989,6 +989,7 @@ export interface ApiMatchMatch extends Struct.CollectionTypeSchema {
   };
   attributes: {
     additionalInfo: Schema.Attribute.String;
+    adminTitle: Schema.Attribute.String & Schema.Attribute.Private;
     awayScore: Schema.Attribute.Integer &
       Schema.Attribute.SetMinMax<
         {
@@ -1149,6 +1150,7 @@ export interface ApiPlayerPlayer extends Struct.CollectionTypeSchema {
     draftAndPublish: false;
   };
   attributes: {
+    adminTitle: Schema.Attribute.String & Schema.Attribute.Private;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -1204,6 +1206,7 @@ export interface ApiPollOptionPollOption extends Struct.CollectionTypeSchema {
     draftAndPublish: false;
   };
   attributes: {
+    adminTitle: Schema.Attribute.String & Schema.Attribute.Private;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -1245,6 +1248,7 @@ export interface ApiPollPoll extends Struct.CollectionTypeSchema {
     draftAndPublish: false;
   };
   attributes: {
+    adminTitle: Schema.Attribute.String & Schema.Attribute.Private;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -1279,6 +1283,7 @@ export interface ApiScorerScorer extends Struct.CollectionTypeSchema {
     draftAndPublish: false;
   };
   attributes: {
+    adminTitle: Schema.Attribute.String & Schema.Attribute.Private;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -1400,6 +1405,7 @@ export interface ApiStandingStanding extends Struct.CollectionTypeSchema {
     draftAndPublish: false;
   };
   attributes: {
+    adminTitle: Schema.Attribute.String & Schema.Attribute.Private;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -1571,6 +1577,7 @@ export interface ApiVideoVideo extends Struct.CollectionTypeSchema {
     draftAndPublish: false;
   };
   attributes: {
+    adminTitle: Schema.Attribute.String & Schema.Attribute.Private;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;

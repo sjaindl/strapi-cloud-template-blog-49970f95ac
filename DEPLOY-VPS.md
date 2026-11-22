@@ -159,6 +159,12 @@ pm2 restart strapi-hvtdp
 Without it, protected documents cannot be downloaded (the endpoint answers 500 and logs an error). After the
 website uses Strapi for documents, `checkPasswordValid.php` is no longer needed.
 
+**Admin titles:** matches, videos, voting options, votings, players, standings and scorers have a computed,
+read-only field "Titel" (`adminTitle`, not in the public API) that the admin shows in relations and the
+relation picker (e.g. "2026/27 · 2. Runde · HV TDP Stainz – STT Pichler 3:3 (12.09.2026)"). It is updated on
+every save (also of related entries) and filled in for entries without one when Strapi starts
+(`src/admin-titles.js`).
+
 **Videos & voting:** the goal videos are attached to the championship matches, so run `videos` after `club`
 and `championship` (it creates matches for older seasons and events, and fills in missing match dates).
 Votes are cast via `POST /api/poll-options/:documentId/vote` (open votings only, at most 5 votes per IP and

@@ -37,6 +37,10 @@
     "order": {
       "type": "integer",
       "default": 0
+    },
+    "adminTitle": {
+      "type": "string",
+      "private": true
     }
   }
 }

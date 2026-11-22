@@ -30,6 +30,10 @@
       "default": 0,
       "min": 0,
       "required": true
+    },
+    "adminTitle": {
+      "type": "string",
+      "private": true
     }
   }
 }
