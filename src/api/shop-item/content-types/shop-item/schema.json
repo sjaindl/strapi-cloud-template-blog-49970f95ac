@@ -1,0 +1,56 @@
+{
+  "kind": "collectionType",
+  "collectionName": "shop_items",
+  "info": {
+    "singularName": "shop-item",
+    "pluralName": "shop-items",
+    "displayName": "Fanshop-Artikel",
+    "description": "Artikel im Fanshop. Ohne Preis wird der Preishinweis angezeigt (z. B. Gutschein: \"Betrag frei wählbar\")."
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "text"
+    },
+    "category": {
+      "type": "enumeration",
+      "enum": [
+        "Bekleidung",
+        "Accessoires",
+        "Sonstiges"
+      ],
+      "default": "Sonstiges",
+      "required": true
+    },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "price": {
+      "type": "decimal",
+      "min": 0
+    },
+    "priceNote": {
+      "type": "string"
+    },
+    "order": {
+      "type": "integer",
+      "default": 0
+    },
+    "optionGroups": {
+      "type": "component",
+      "repeatable": true,
+      "component": "shop.option-group"
+    }
+  }
+}

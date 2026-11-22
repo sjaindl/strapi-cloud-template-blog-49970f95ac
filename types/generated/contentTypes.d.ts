@@ -1089,6 +1089,52 @@ export interface ApiPlayerPlayer extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiShopItemShopItem extends Struct.CollectionTypeSchema {
+  collectionName: 'shop_items';
+  info: {
+    description: 'Artikel im Fanshop. Ohne Preis wird der Preishinweis angezeigt (z. B. Gutschein: "Betrag frei w\u00E4hlbar").';
+    displayName: 'Fanshop-Artikel';
+    pluralName: 'shop-items';
+    singularName: 'shop-item';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    category: Schema.Attribute.Enumeration<
+      ['Bekleidung', 'Accessoires', 'Sonstiges']
+    > &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'Sonstiges'>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    description: Schema.Attribute.Text;
+    image: Schema.Attribute.Media<'images'>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::shop-item.shop-item'
+    > &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+    optionGroups: Schema.Attribute.Component<'shop.option-group', true>;
+    order: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    price: Schema.Attribute.Decimal &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 0;
+        },
+        number
+      >;
+    priceNote: Schema.Attribute.String;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiStoryStory extends Struct.CollectionTypeSchema {
   collectionName: 'stories';
   info: {
@@ -1723,6 +1769,7 @@ declare module '@strapi/strapi' {
       'api::news-item.news-item': ApiNewsItemNewsItem;
       'api::papp-fan.papp-fan': ApiPappFanPappFan;
       'api::player.player': ApiPlayerPlayer;
+      'api::shop-item.shop-item': ApiShopItemShopItem;
       'api::story.story': ApiStoryStory;
       'api::team-page.team-page': ApiTeamPageTeamPage;
       'plugin::content-releases.release': PluginContentReleasesRelease;

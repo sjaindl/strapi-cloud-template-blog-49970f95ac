@@ -139,6 +139,7 @@ runs the selected areas in production mode and always starts the server again â€
 ```bash
 ./migrate-to-strapi.sh --strapi-dir ~/strapi --images <webroot>/assets/images announcement
 ./migrate-to-strapi.sh --strapi-dir ~/strapi --images <webroot>/assets/images club   # ~160 images
+./migrate-to-strapi.sh --strapi-dir ~/strapi --images <webroot>/assets/images fanshop
 ./migrate-to-strapi.sh --strapi-dir ~/strapi --images <webroot>/assets/images   # all areas
 ./migrate-to-strapi.sh --list                                                   # available areas
 ```

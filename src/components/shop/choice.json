@@ -1,0 +1,13 @@
+{
+  "collectionName": "components_shop_choices",
+  "info": {
+    "displayName": "Auswahlmöglichkeit",
+    "icon": "check",
+    "description": "Eine wählbare Option, z. B. \"L/XL\". Ein Preis ersetzt den Artikelpreis, wenn diese Option gewählt wird."
+  },
+  "options": {},
+  "attributes": {
+    "label": { "type": "string", "required": true },
+    "price": { "type": "decimal", "min": 0 }
+  }
+}

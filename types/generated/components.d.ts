@@ -62,6 +62,43 @@ export interface SharedSlider extends Struct.ComponentSchema {
   };
 }
 
+export interface ShopChoice extends Struct.ComponentSchema {
+  collectionName: 'components_shop_choices';
+  info: {
+    description: 'Eine w\u00E4hlbare Option, z. B. "L/XL". Ein Preis ersetzt den Artikelpreis, wenn diese Option gew\u00E4hlt wird.';
+    displayName: 'Auswahlm\u00F6glichkeit';
+    icon: 'check';
+  };
+  attributes: {
+    label: Schema.Attribute.String & Schema.Attribute.Required;
+    price: Schema.Attribute.Decimal &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 0;
+        },
+        number
+      >;
+  };
+}
+
+export interface ShopOptionGroup extends Struct.ComponentSchema {
+  collectionName: 'components_shop_option_groups';
+  info: {
+    description: 'Auswahl (z. B. Gr\u00F6\u00DFe mit S/M, L/XL) oder Textfeld (z. B. Initialen, Gutschein-Betrag) im Bestellformular.';
+    displayName: 'Optionsgruppe';
+    icon: 'bulletList';
+  };
+  attributes: {
+    choices: Schema.Attribute.Component<'shop.choice', true>;
+    kind: Schema.Attribute.Enumeration<['Auswahl', 'Text']> &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'Auswahl'>;
+    label: Schema.Attribute.String & Schema.Attribute.Required;
+    placeholder: Schema.Attribute.String;
+    required: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+  };
+}
+
 declare module '@strapi/strapi' {
   export namespace Public {
     export interface ComponentSchemas {
@@ -70,6 +107,8 @@ declare module '@strapi/strapi' {
       'shared.rich-text': SharedRichText;
       'shared.seo': SharedSeo;
       'shared.slider': SharedSlider;
+      'shop.choice': ShopChoice;
+      'shop.option-group': ShopOptionGroup;
     }
   }
 }

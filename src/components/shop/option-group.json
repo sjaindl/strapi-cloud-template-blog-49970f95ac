@@ -1,0 +1,16 @@
+{
+  "collectionName": "components_shop_option_groups",
+  "info": {
+    "displayName": "Optionsgruppe",
+    "icon": "bulletList",
+    "description": "Auswahl (z. B. Größe mit S/M, L/XL) oder Textfeld (z. B. Initialen, Gutschein-Betrag) im Bestellformular."
+  },
+  "options": {},
+  "attributes": {
+    "label": { "type": "string", "required": true },
+    "kind": { "type": "enumeration", "enum": ["Auswahl", "Text"], "default": "Auswahl", "required": true },
+    "required": { "type": "boolean", "default": true },
+    "placeholder": { "type": "string" },
+    "choices": { "type": "component", "repeatable": true, "component": "shop.choice" }
+  }
+}
