@@ -139,6 +139,9 @@ Check: `curl 'https://cms.hvtdpstainz.at/api/news-items?pagination[pageSize]=1'`
       file, also scripts, into the web root) and `<webroot>/api/getGoldenShot.php` (it returns email and phone of
       the participants) on the server. The live website does not use either (the Golden Shot pages are switched off).
 - [ ] New Strapi version deployed (`git pull`, `npm ci`, `npm run build`, `pm2 restart strapi-hvtdp`).
+- [ ] If the club area was already migrated with an older Strapi version: run `club` again after deploying this one
+      (the player field `status` was renamed to `squad` because the admin could not show it, and the member lists
+      got their "Stand" dates on the team page).
 - [ ] Areas migrated in this order: `announcement club fanshop documents championship videos gallery pages news-categories goldenshot events`.
 - [ ] `videos` run once more **right before** deploying the website (current vote counts), never again afterwards.
 - [ ] Postman collection (production environment) passes, then deploy the website.

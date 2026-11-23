@@ -2,8 +2,8 @@
 
 /**
  * Migrates the club data of the legacy PHP API into Strapi:
- *   players (getPlayers/getSquadPlayers/getActivePlayers → `player` with status Kader/Aktiv/Ehemalig),
- *   team page (`team-page.squadAsOf`), board (getChefs → `board-member`),
+ *   players (getPlayers/getSquadPlayers/getActivePlayers → `player` with squad Kader/Aktiv/Ehemalig),
+ *   team page (`team-page`: squad and member lists "as of" dates), board (getChefs → `board-member`),
  *   members (getActive/Support/KidsMembership → `member`), Papp-Fans (getPappfans → `papp-fan`),
  *   match ball donations (getDonations → `donation`). Images go to the media library.
  *
@@ -53,7 +53,7 @@ runMigration(async () => {
   const media = createMediaUploader({ images: args.images, imagesUrl: args['images-url'] });
   const counter = createCounter();
 
-  // Players: every player once, status from the squad/active lists.
+  // Players: every player once, squad status from the squad/active lists.
   const squad = new Set((await source('getSquadPlayers')).map(nameKey));
   const active = new Set((await source('getActivePlayers')).map(nameKey));
   for (const player of await source('getPlayers')) {
@@ -67,7 +67,7 @@ runMigration(async () => {
         firstName: player.firstName.trim(),
         lastName: player.lastName.trim(),
         position: player.position || null,
-        status: squad.has(key) ? 'Kader' : active.has(key) ? 'Aktiv' : 'Ehemalig',
+        squad: squad.has(key) ? 'Kader' : active.has(key) ? 'Aktiv' : 'Ehemalig',
         memberSinceYear: toInt(player.memberSinceYear),
         games: toInt(player.games) ?? 0,
         goals: toInt(player.goals) ?? 0,
@@ -78,11 +78,11 @@ runMigration(async () => {
   }
   for (const { imagePath, ...player } of EXTRA_PLAYERS) {
     const image = await media.get(imagePath, `player ${player.firstName}|${player.lastName}`, `${player.firstName} ${player.lastName}`);
-    counter.add('player', await upsert('api::player.player', player, { ...player, status: 'Ehemalig', image: image ? image.id : null }));
+    counter.add('player', await upsert('api::player.player', player, { ...player, squad: 'Ehemalig', image: image ? image.id : null }));
   }
 
   // The squad list date was shown as a fixed "Stand 12/2025" so far.
-  await setSingle('api::team-page.team-page', { squadAsOf: args['squad-as-of'] || '2025-12-01' });
+  const squadAsOf = args['squad-as-of'] || '2025-12-01';
 
   // "Dummy" entries were placeholders that aligned the old website's grid.
   const chefs = (await source('getChefs')).filter((chef) => chef.firstName.trim() !== 'Dummy');
@@ -102,12 +102,16 @@ runMigration(async () => {
     counter.add('board-member', result);
   }
 
-  for (const [endpoint, type] of [
-    ['getActiveMembership', 'Aktiv'],
-    ['getSupportMembership', 'Fördernd'],
-    ['getKidsMembership', 'Kids'],
+  // Members; each list is "as of" the newest legacy date of its members (shown per group on the website).
+  const membersAsOf = {};
+  for (const [endpoint, type, asOfField] of [
+    ['getActiveMembership', 'Aktiv', 'activeMembersAsOf'],
+    ['getSupportMembership', 'Fördernd', 'supportingMembersAsOf'],
+    ['getKidsMembership', 'Kids', 'kidsMembersAsOf'],
   ]) {
-    for (const member of await source(endpoint)) {
+    const members = await source(endpoint);
+    membersAsOf[asOfField] = members.map((member) => germanDateToIso(member.per)).filter(Boolean).sort().pop() ?? null;
+    for (const member of members) {
       const result = await upsert(
         'api::member.member',
         { firstName: member.firstName.trim(), lastName: member.lastName.trim(), type },
@@ -115,12 +119,13 @@ runMigration(async () => {
           firstName: member.firstName.trim(),
           lastName: member.lastName.trim(),
           type,
-          since: germanDateToIso(member.per),
         }
       );
       counter.add('member', result);
     }
   }
+
+  await setSingle('api::team-page.team-page', { squadAsOf, ...membersAsOf });
 
   const fans = [...(await source('getPappfans'))].sort((a, b) => toInt(a.id) - toInt(b.id));
   for (const [index, fan] of fans.entries()) {

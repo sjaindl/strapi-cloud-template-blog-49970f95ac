@@ -1404,7 +1404,6 @@ export interface ApiMemberMember extends Struct.CollectionTypeSchema {
     > &
       Schema.Attribute.Private;
     publishedAt: Schema.Attribute.DateTime;
-    since: Schema.Attribute.Date;
     type: Schema.Attribute.Enumeration<['Aktiv', 'F\u00F6rdernd', 'Kids']> &
       Schema.Attribute.Required &
       Schema.Attribute.DefaultTo<'Aktiv'>;
@@ -1518,7 +1517,6 @@ export interface ApiPlayerPlayer extends Struct.CollectionTypeSchema {
       > &
       Schema.Attribute.DefaultTo<0>;
     image: Schema.Attribute.Media<'images'>;
-    jerseyNumber: Schema.Attribute.Integer;
     lastName: Schema.Attribute.String & Schema.Attribute.Required;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
@@ -1531,7 +1529,7 @@ export interface ApiPlayerPlayer extends Struct.CollectionTypeSchema {
       ['Tormann', 'Verteidiger', 'Mittelfeld', 'St\u00FCrmer']
     >;
     publishedAt: Schema.Attribute.DateTime;
-    status: Schema.Attribute.Enumeration<['Kader', 'Aktiv', 'Ehemalig']> &
+    squad: Schema.Attribute.Enumeration<['Kader', 'Aktiv', 'Ehemalig']> &
       Schema.Attribute.Required &
       Schema.Attribute.DefaultTo<'Kader'>;
     updatedAt: Schema.Attribute.DateTime;
@@ -1889,7 +1887,7 @@ export interface ApiStoryStory extends Struct.CollectionTypeSchema {
 export interface ApiTeamPageTeamPage extends Struct.SingleTypeSchema {
   collectionName: 'team_pages';
   info: {
-    description: 'Angaben zur Team-Seite.';
+    description: 'Stand-Angaben der Team- und Mitgliederseite. Das Datum aktualisieren, wenn sich die jeweilige Liste \u00E4ndert.';
     displayName: 'Team-Seite';
     pluralName: 'team-pages';
     singularName: 'team-page';
@@ -1898,9 +1896,11 @@ export interface ApiTeamPageTeamPage extends Struct.SingleTypeSchema {
     draftAndPublish: false;
   };
   attributes: {
+    activeMembersAsOf: Schema.Attribute.Date;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    kidsMembersAsOf: Schema.Attribute.Date;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
@@ -1909,6 +1909,7 @@ export interface ApiTeamPageTeamPage extends Struct.SingleTypeSchema {
       Schema.Attribute.Private;
     publishedAt: Schema.Attribute.DateTime;
     squadAsOf: Schema.Attribute.Date;
+    supportingMembersAsOf: Schema.Attribute.Date;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;

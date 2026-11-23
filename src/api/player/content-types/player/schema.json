@@ -29,7 +29,7 @@
         "Stürmer"
       ]
     },
-    "status": {
+    "squad": {
       "type": "enumeration",
       "enum": [
         "Kader",
@@ -51,9 +51,6 @@
       "type": "integer",
       "default": 0,
       "min": 0
-    },
-    "jerseyNumber": {
-      "type": "integer"
     },
     "image": {
       "type": "media",

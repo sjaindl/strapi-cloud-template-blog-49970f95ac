@@ -29,9 +29,6 @@
       ],
       "default": "Aktiv",
       "required": true
-    },
-    "since": {
-      "type": "date"
     }
   }
 }

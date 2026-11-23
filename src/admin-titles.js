@@ -50,7 +50,7 @@ const TYPES = {
   'api::season.season': { populate: {}, title: () => null },
   'api::player.player': {
     populate: {},
-    title: (player) => `${fullName(player)}${player.status === 'Ehemalig' ? ' (ehemalig)' : ''}`,
+    title: (player) => `${fullName(player)}${player.squad === 'Ehemalig' ? ' (ehemalig)' : ''}`,
   },
   // "2024/25 · 14. Runde · SK Hohenburg – HV TDP Stainz 5:3 (28.06.2025)", events "2021/22 · 1. Entenrennen Stainz (16.09.2021)"
   'api::match.match': {
@@ -160,6 +160,17 @@ function middleware(strapi) {
   };
 }
 
+/** Admin labels of fields whose technical name says little. */
+const FIELD_LABELS = {
+  'api::player.player': { squad: 'Kader-Status' },
+  'api::team-page.team-page': {
+    squadAsOf: 'Stand Kader',
+    activeMembersAsOf: 'Stand aktive Mitglieder',
+    supportingMembersAsOf: 'Stand fördernde Mitglieder',
+    kidsMembersAsOf: 'Stand Kids Corner',
+  },
+};
+
 /** Startup: `adminTitle` as main field (read-only, first list column) and titles for entries without one. */
 async function setup(strapi) {
   for (const uid of TITLED) {
@@ -177,6 +188,20 @@ async function setup(strapi) {
 
     const missing = await strapi.db.query(uid).findMany({ select: ['documentId'], where: { adminTitle: { $null: true } } });
     await refresh(strapi, uid, missing.map((row) => row.documentId), { cascade: false });
+  }
+
+  for (const [uid, labels] of Object.entries(FIELD_LABELS)) {
+    const store = strapi.store({ type: 'plugin', name: 'content_manager_configuration', key: `content_types::${uid}` });
+    const config = await store.get();
+    if (!config?.metadatas) continue;
+    for (const [field, label] of Object.entries(labels)) {
+      const metadata = config.metadatas[field];
+      if (metadata) {
+        metadata.edit = { ...metadata.edit, label };
+        metadata.list = { ...metadata.list, label };
+      }
+    }
+    await store.set({ value: config });
   }
 
   // Each relation also stores the field it displays in the configuration of the type (or component) it belongs to.
