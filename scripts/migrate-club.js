@@ -42,9 +42,9 @@ const nameKey = (entry) => `${entry.firstName.trim()}|${entry.lastName.trim()}`;
 
 /** Former players the PHP player list does not contain, but who scored in the goal videos. */
 const EXTRA_PLAYERS = [
-  { firstName: 'Florian', lastName: 'Schriebl' },
-  { firstName: 'Herbert', lastName: 'Kohlberger' },
-  { firstName: 'Markus', lastName: 'Sackl' },
+  { firstName: 'Florian', lastName: 'Schriebl', imagePath: 'team/Schriebl.JPG' },
+  { firstName: 'Herbert', lastName: 'Kohlberger', imagePath: 'team/Kohlberger.JPG' },
+  { firstName: 'Markus', lastName: 'Sackl', imagePath: 'team/Sackl.JPG' },
 ];
 
 runMigration(async () => {
@@ -76,8 +76,9 @@ runMigration(async () => {
     );
     counter.add('player', result);
   }
-  for (const player of EXTRA_PLAYERS) {
-    counter.add('player', await upsert('api::player.player', player, { ...player, status: 'Ehemalig' }));
+  for (const { imagePath, ...player } of EXTRA_PLAYERS) {
+    const image = await media.get(imagePath, `player ${player.firstName}|${player.lastName}`, `${player.firstName} ${player.lastName}`);
+    counter.add('player', await upsert('api::player.player', player, { ...player, status: 'Ehemalig', image: image ? image.id : null }));
   }
 
   // The squad list date was shown as a fixed "Stand 12/2025" so far.

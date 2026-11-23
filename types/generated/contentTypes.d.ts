@@ -750,6 +750,116 @@ export interface ApiCategoryCategory extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiClubEventRegistrationClubEventRegistration
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'club_event_registrations';
+  info: {
+    description: 'Anmeldungen und Bestellungen (Enten) \u00FCber die Veranstaltungsseiten. Der Verein und die angemeldete Person bekommen je eine E-Mail.';
+    displayName: 'Veranstaltungs-Anmeldung';
+    pluralName: 'club-event-registrations';
+    singularName: 'club-event-registration';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    address: Schema.Attribute.String;
+    amount: Schema.Attribute.Decimal &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 0;
+        },
+        number
+      >;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    edition: Schema.Attribute.String;
+    email: Schema.Attribute.Email & Schema.Attribute.Required;
+    event: Schema.Attribute.Relation<'manyToOne', 'api::club-event.club-event'>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::club-event-registration.club-event-registration'
+    > &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+    phone: Schema.Attribute.String;
+    publishedAt: Schema.Attribute.DateTime;
+    quantity: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 1;
+        },
+        number
+      >;
+    teamName: Schema.Attribute.String;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiClubEventClubEvent extends Struct.CollectionTypeSchema {
+  collectionName: 'club_events';
+  info: {
+    description: 'Veranstaltungen mit eigener Seite und Anmeldung (Bocciaturnier, Kleinfeldturnier, Big Darts, Entenrennen). Die Seite /<slug> ist nur sichtbar, wenn "aktiv"; die Anmeldung schlie\u00DFt nach dem Anmeldeschluss automatisch.';
+    displayName: 'Veranstaltung';
+    pluralName: 'club-events';
+    singularName: 'club-event';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    active: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    bankRecipient: Schema.Attribute.String;
+    bic: Schema.Attribute.String;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    date: Schema.Attribute.Date;
+    description: Schema.Attribute.RichText;
+    format: Schema.Attribute.String;
+    formType: Schema.Attribute.Enumeration<['team', 'order']> &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'team'>;
+    iban: Schema.Attribute.String;
+    image: Schema.Attribute.Media<'images'>;
+    lead: Schema.Attribute.Text;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::club-event.club-event'
+    > &
+      Schema.Attribute.Private;
+    location: Schema.Attribute.String;
+    orderUnit: Schema.Attribute.String;
+    orderUnitPlural: Schema.Attribute.String;
+    paymentReference: Schema.Attribute.String;
+    phoneRequired: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    price: Schema.Attribute.Decimal &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 0;
+        },
+        number
+      >;
+    publishedAt: Schema.Attribute.DateTime;
+    registrationDeadline: Schema.Attribute.Date;
+    registrationOpen: Schema.Attribute.Boolean &
+      Schema.Attribute.DefaultTo<false>;
+    slug: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique;
+    startTime: Schema.Attribute.Time;
+    title: Schema.Attribute.String & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiDocumentDocument extends Struct.CollectionTypeSchema {
   collectionName: 'documents';
   info: {
@@ -2382,6 +2492,8 @@ declare module '@strapi/strapi' {
       'api::author.author': ApiAuthorAuthor;
       'api::board-member.board-member': ApiBoardMemberBoardMember;
       'api::category.category': ApiCategoryCategory;
+      'api::club-event-registration.club-event-registration': ApiClubEventRegistrationClubEventRegistration;
+      'api::club-event.club-event': ApiClubEventClubEvent;
       'api::document.document': ApiDocumentDocument;
       'api::donation.donation': ApiDonationDonation;
       'api::event-category.event-category': ApiEventCategoryEventCategory;

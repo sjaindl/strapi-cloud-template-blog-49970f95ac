@@ -1,0 +1,49 @@
+{
+  "kind": "collectionType",
+  "collectionName": "club_event_registrations",
+  "info": {
+    "singularName": "club-event-registration",
+    "pluralName": "club-event-registrations",
+    "displayName": "Veranstaltungs-Anmeldung",
+    "description": "Anmeldungen und Bestellungen (Enten) über die Veranstaltungsseiten. Der Verein und die angemeldete Person bekommen je eine E-Mail."
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "event": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::club-event.club-event"
+    },
+    "edition": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "email": {
+      "type": "email",
+      "required": true
+    },
+    "phone": {
+      "type": "string"
+    },
+    "teamName": {
+      "type": "string"
+    },
+    "address": {
+      "type": "string"
+    },
+    "quantity": {
+      "type": "integer",
+      "min": 1
+    },
+    "amount": {
+      "type": "decimal",
+      "min": 0
+    }
+  }
+}

@@ -135,13 +135,14 @@ Check: `curl 'https://cms.hvtdpstainz.at/api/news-items?pagination[pageSize]=1'`
       Test once: register a test team on the website, check both mails arrive, delete the test entry in the admin.
 - [ ] `DOCUMENTS_PASSWORD` in `~/strapi/.env` (protected documents, see "Documents" below).
 - [ ] `IS_PROXIED=true` in `~/strapi/.env` (rate limits of votes, downloads and registrations see the visitor's IP).
-- [ ] **Security, right away (independent of the switch):** delete `<webroot>/api/uploadFile.php` on the server (it
-      accepted any file, also scripts, into the web root) and upload the fixed `api/getGoldenShot.php` (no longer
-      returns email/phone of the participants).
+- [ ] **Security, right away (independent of the switch):** delete `<webroot>/api/uploadFile.php` (it accepted any
+      file, also scripts, into the web root) and `<webroot>/api/getGoldenShot.php` (it returns email and phone of
+      the participants) on the server. The live website does not use either (the Golden Shot pages are switched off).
 - [ ] New Strapi version deployed (`git pull`, `npm ci`, `npm run build`, `pm2 restart strapi-hvtdp`).
-- [ ] Areas migrated in this order: `announcement club fanshop documents championship videos gallery pages news-categories goldenshot`.
+- [ ] Areas migrated in this order: `announcement club fanshop documents championship videos gallery pages news-categories goldenshot events`.
 - [ ] `videos` run once more **right before** deploying the website (current vote counts), never again afterwards.
 - [ ] Postman collection (production environment) passes, then deploy the website.
+- [ ] After the switch: clean up the web server and switch the chatbot, see "After the switch" below.
 
 The remaining website data moves from the PHP endpoints to Strapi one area at a time. Every area has a
 script in `scripts/migrate-<area>.js` (shared helpers: `scripts/lib/migrate-utils.js`). Each script:
@@ -167,6 +168,7 @@ runs the selected areas in production mode and always starts the server again �
 ./migrate-to-strapi.sh --strapi-dir ~/strapi --images <webroot>/assets/images --videos <webroot>/assets/videos pages   # after gallery
 ./migrate-to-strapi.sh --strapi-dir ~/strapi news-categories   # after championship + videos
 ./migrate-to-strapi.sh --strapi-dir ~/strapi --images <webroot>/assets/images goldenshot
+./migrate-to-strapi.sh --strapi-dir ~/strapi --images <webroot>/assets/images events
 ./migrate-to-strapi.sh --strapi-dir ~/strapi --images <webroot>/assets/images   # all areas
 ./migrate-to-strapi.sh --list                                                   # available areas
 ```
@@ -238,6 +240,16 @@ an optional photo) are stored with their contact data in "Torschuss-Challenge-An
 (name + photo) right away and trigger the same two mails as the Hallenturnier (SMTP setup above). Switch "open" on
 the voting once the registration phase is over. The page is `/#/torschusschallenge`.
 
+**Events (Bocciaturnier, Kleinfeldturnier, Big Darts, Entenrennen):** `events` creates one "Veranstaltung" per event
+(switched off; their last editions are over). For the next edition: update title, date, time, place, fee or price,
+reference and texts, switch on "aktiv" and "Anmeldung offen" — the page `/#/<slug>` (`bocciaturnier`,
+`kleinfeldturnier`, `bigdarts`, `entenrennen`) then shows the form. Form type "team" asks for a team name (phone
+optional unless "Telefon verpflichtend"), "order" (Entenrennen) for address, phone and quantity and computes the
+amount (quantity × price; bundle prices like "4er Kombi" are not modelled). Registrations are stored in
+"Veranstaltungs-Anmeldung" and trigger the club mail and the confirmation (with amount and bank details). A new
+event needs an entry plus one route line in the website (`app-routing/routes.ts`). The old scripts
+`postDuckrun.php`, `postBigDarts.php`, `postKleinfeldturnier.php` are no longer used.
+
 **Videos & voting:** the goal videos are attached to the championship matches, so run `videos` after `club`
 and `championship` (it creates matches for older seasons and events, and fills in missing match dates).
 Votes are cast via `POST /api/poll-options/:documentId/vote` (open votings only, at most 5 votes per IP and
@@ -253,6 +265,52 @@ areas are added here and to the collection as they are migrated.
 
 Disk space: the images are about 1.5 GB; Strapi additionally stores thumbnail/small/medium/large
 versions (configured in `config/plugins.js`), so plan for roughly 3 GB in `public/uploads`.
+
+## 5c. After the switch: clean up the web server
+
+Once the new website runs on Strapi (and the Postman collection passes against production), remove what Strapi
+replaced. The website repo no longer contains these files, but uploading `dist/hvtdp/` does not delete anything on
+the server.
+
+**PHP scripts** in `<webroot>/api/` that the website no longer calls:
+
+```
+checkPasswordValid.php getActiveMembership.php getDocuments.php getGames_v1.php getGoalOfTheSeason.php
+getKidsMembership.php getMatchInfo.php getNews.php getPlayerOfTheSeason.php getPlayers.php getSeasons.php
+getStandings.php getSupportMembership.php getTicker.php postGoalOfTheSeasonVote.php postGoldenShot.php
+postGoldenShotVote.php postHallenturnier.php postJubilaeum.php postPlayerOfTheSeasonVote.php
+postDuckrun.php postBigDarts.php postKleinfeldturnier.php
+```
+
+Still needed: `getSurvey.php`, `getVisitCount.php`, `getAnalyticsData.php`, `constants.php` (+ composer files) — and, until the chatbot is switched (below), the
+nine chatbot sources `getActivePlayers.php getSquadPlayers.php getChefs.php getDonations.php getGames.php
+getItems.php getPappfans.php getScorers.php getPhotos.php`.
+
+**Media folders** in `<webroot>/assets/` that now live in the Strapi media library: `images/gallery`,
+`images/news`, `images/team`, `images/vorstand`, `images/matchballspende`, `images/pappfan`, `images/fanshop`,
+`images/advent`, `images/goldenshot`, `videos/advent`, `documents`, and the images `hallenturnier_2027.jpg`,
+`torschusschallenge.jpeg`, `goldenshot_voting_2026_result.jpeg`, `boccia_2026.jpeg`, `turnier_2023.jpeg`, `bigdarts.jpg`,
+`duckrun_2025.jpeg`. Keep a backup until you are sure nothing links to
+them from outside (old Facebook posts may link to `assets/documents/*.pdf`).
+
+**Chatbot (Flowise, `/flowise`):** its tools read the nine PHP scripts above with `?llm=true`; after the switch
+their MySQL data is no longer updated. Point the tools at Strapi instead (all public, `pagination[pageSize]=100`),
+then delete the nine scripts:
+
+| PHP (old) | Strapi (new) |
+|---|---|
+| getActivePlayers.php | `/api/players?filters[status][$eq]=Aktiv&fields[0]=firstName&fields[1]=lastName&fields[2]=position` |
+| getSquadPlayers.php | `/api/players?filters[status][$eq]=Kader&fields[0]=firstName&fields[1]=lastName&fields[2]=position&fields[3]=jerseyNumber` |
+| getChefs.php | `/api/board-members?sort[0]=order:asc` |
+| getDonations.php | `/api/donations?sort[0]=date:desc` |
+| getGames.php | `/api/matches?filters[videos][id][$notNull]=true&populate[season][fields][0]=key&populate[videos][fields][0]=description&populate[videos][fields][1]=name&populate[videos][populate][player][fields][0]=lastName` |
+| getItems.php | `/api/shop-items?sort[0]=order:asc&populate[optionGroups][populate][choices]=true` |
+| getPappfans.php | `/api/papp-fans?sort[0]=order:asc` |
+| getScorers.php | `/api/scorers?populate[season][fields][0]=key&populate[player][fields][0]=firstName&populate[player][fields][1]=lastName` |
+| getPhotos.php | `/api/albums?fields[0]=name&fields[1]=year&fields[2]=date&sort[0]=date:desc` |
+
+Further sources the chatbot can use now: `/api/news-items` (with `category`), `/api/standings`, `/api/matches`,
+`/api/hallenturnier`, `/api/documents` (protected documents without file).
 
 ## 6. Backups
 

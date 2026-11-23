@@ -1,0 +1,97 @@
+{
+  "kind": "collectionType",
+  "collectionName": "club_events",
+  "info": {
+    "singularName": "club-event",
+    "pluralName": "club-events",
+    "displayName": "Veranstaltung",
+    "description": "Veranstaltungen mit eigener Seite und Anmeldung (Bocciaturnier, Kleinfeldturnier, Big Darts, Entenrennen). Die Seite /<slug> ist nur sichtbar, wenn \"aktiv\"; die Anmeldung schließt nach dem Anmeldeschluss automatisch."
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "slug": {
+      "type": "string",
+      "required": true,
+      "unique": true,
+      "regex": "^[a-z0-9-]+$"
+    },
+    "active": {
+      "type": "boolean",
+      "default": false
+    },
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "lead": {
+      "type": "text"
+    },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "description": {
+      "type": "richtext"
+    },
+    "date": {
+      "type": "date"
+    },
+    "startTime": {
+      "type": "time"
+    },
+    "location": {
+      "type": "string"
+    },
+    "format": {
+      "type": "string"
+    },
+    "formType": {
+      "type": "enumeration",
+      "enum": [
+        "team",
+        "order"
+      ],
+      "default": "team",
+      "required": true
+    },
+    "price": {
+      "type": "decimal",
+      "min": 0
+    },
+    "orderUnit": {
+      "type": "string"
+    },
+    "orderUnitPlural": {
+      "type": "string"
+    },
+    "phoneRequired": {
+      "type": "boolean",
+      "default": false
+    },
+    "registrationOpen": {
+      "type": "boolean",
+      "default": false
+    },
+    "registrationDeadline": {
+      "type": "date"
+    },
+    "bankRecipient": {
+      "type": "string"
+    },
+    "iban": {
+      "type": "string"
+    },
+    "bic": {
+      "type": "string"
+    },
+    "paymentReference": {
+      "type": "string"
+    }
+  }
+}
