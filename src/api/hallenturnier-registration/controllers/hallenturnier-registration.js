@@ -10,30 +10,10 @@
 
 const { createCoreController } = require('@strapi/strapi').factories;
 
+const { clubCc, clubMail, createRateLimiter, formatDate, isEmail, sendMail } = require('../../../utils/registrations');
+
 const UID = 'api::hallenturnier-registration.hallenturnier-registration';
-const MAX_PER_HOUR = 5;
-const registrationsByIp = new Map(); // ip → { count, resetAt }
-const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-const allow = (ip) => {
-  const now = Date.now();
-  const entry = registrationsByIp.get(ip);
-  if (!entry || entry.resetAt < now) {
-    registrationsByIp.set(ip, { count: 1, resetAt: now + 60 * 60 * 1000 });
-    return true;
-  }
-  if (entry.count >= MAX_PER_HOUR) return false;
-  entry.count++;
-  return true;
-};
-
-/** "2027-01-09" → "Sa, 09.01.2027" */
-const formatDate = (value) => {
-  if (!value) return '';
-  const date = new Date(`${value}T12:00:00`);
-  const weekday = date.toLocaleDateString('de-DE', { weekday: 'short' }).replace('.', '');
-  return `${weekday}, ${date.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' })}`;
-};
+const allow = createRateLimiter(5, 60 * 60 * 1000);
 
 const formatFee = (value) =>
   value === null || value === undefined ? '' : `${new Intl.NumberFormat('de-DE', { minimumFractionDigits: Number.isInteger(Number(value)) ? 0 : 2 }).format(value)} €`;
@@ -46,17 +26,7 @@ const isOpen = (tournament) => {
 };
 
 module.exports = createCoreController(UID, ({ strapi }) => {
-  const send = async (mail) => {
-    if (!process.env.SMTP_HOST) {
-      strapi.log.info(`[mail not sent, no SMTP_HOST] to=${mail.to} cc=${mail.cc ?? ''} replyTo=${mail.replyTo ?? ''} subject="${mail.subject}"\n${mail.text}`);
-      return;
-    }
-    try {
-      await strapi.plugin('email').service('email').send(mail);
-    } catch (error) {
-      strapi.log.error(`Mail "${mail.subject}" to ${mail.to} could not be sent: ${error.message}`);
-    }
-  };
+  const send = (mail) => sendMail(strapi, mail);
 
   return {
     /** POST /api/hallenturnier-registrations/register { name, email, teamName, website (honeypot) } */
@@ -71,7 +41,7 @@ module.exports = createCoreController(UID, ({ strapi }) => {
         ctx.body = { ok: true };
         return;
       }
-      if (name.length < 2 || name.length > 25 || !EMAIL.test(email) || !teamName || teamName.length > 100) {
+      if (name.length < 2 || name.length > 25 || !isEmail(email) || !teamName || teamName.length > 100) {
         return ctx.badRequest('Bitte Name (2–25 Zeichen), eine gültige E-Mail und den Mannschaftsnamen angeben.');
       }
 
@@ -85,10 +55,9 @@ module.exports = createCoreController(UID, ({ strapi }) => {
 
       await strapi.documents(UID).create({ data: { name, email, teamName, edition: tournament.title } });
 
-      const clubMail = process.env.REGISTRATION_MAIL_TO || 'hvtdpstainz@gmx.at';
       await send({
-        to: clubMail,
-        cc: process.env.REGISTRATION_MAIL_CC || undefined,
+        to: clubMail(),
+        cc: clubCc(),
         replyTo: email,
         subject: `Anmeldung ${tournament.title}: ${teamName}`,
         text: [`Name: ${name}`, `E-Mail: ${email}`, `Mannschaft: ${teamName}`].join('\n'),
@@ -97,7 +66,7 @@ module.exports = createCoreController(UID, ({ strapi }) => {
       const reference = tournament.paymentReference ? tournament.paymentReference.replace('Mannschaftsname', teamName) : teamName;
       await send({
         to: email,
-        replyTo: clubMail,
+        replyTo: clubMail(),
         subject: `Deine Anmeldung zum ${tournament.title}`,
         text: [
           `Hallo ${name},`,
@@ -115,7 +84,7 @@ module.exports = createCoreController(UID, ({ strapi }) => {
           tournament.iban ? `IBAN: ${tournament.iban}` : null,
           `Verwendungszweck: ${reference}`,
           '',
-          `Bei Fragen sende einfach eine E-Mail an ${clubMail}.`,
+          `Bei Fragen sende einfach eine E-Mail an ${clubMail()}.`,
           '',
           'Sportliche Grüße',
           'HV TDP Stainz',

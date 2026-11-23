@@ -43,7 +43,8 @@ function shortMatch(match) {
   return withDate(match.competition === 'Event' ? match.title : `${match.homeTeam} – ${match.awayTeam}`, match.date);
 }
 
-const pollTitle = (poll) => (poll ? `${poll.type === 'goalOfTheYear' ? 'Tor des Jahres' : 'Spieler der Saison'} ${poll.year}` : '');
+const POLL_NAMES = { goalOfTheYear: 'Tor des Jahres', playerOfTheYear: 'Spieler der Saison', goldenShot: 'Torschuss Challenge' };
+const pollTitle = (poll) => (poll ? `${POLL_NAMES[poll.type] ?? poll.type} ${poll.year}` : '');
 
 const TYPES = {
   'api::season.season': { populate: {}, title: () => null },

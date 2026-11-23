@@ -1,0 +1,46 @@
+{
+  "kind": "collectionType",
+  "collectionName": "golden_shot_registrations",
+  "info": {
+    "singularName": "golden-shot-registration",
+    "pluralName": "golden-shot-registrations",
+    "displayName": "Torschuss-Challenge-Anmeldung",
+    "description": "Anmeldungen zur Torschuss Challenge über die Website. Jede Anmeldung wird automatisch zur Voting-Option (Name + Foto); Kontaktdaten sind nur hier sichtbar."
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "firstName": {
+      "type": "string",
+      "required": true
+    },
+    "lastName": {
+      "type": "string",
+      "required": true
+    },
+    "email": {
+      "type": "email",
+      "required": true
+    },
+    "phone": {
+      "type": "string"
+    },
+    "photo": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "edition": {
+      "type": "string"
+    },
+    "option": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::poll-option.poll-option"
+    }
+  }
+}

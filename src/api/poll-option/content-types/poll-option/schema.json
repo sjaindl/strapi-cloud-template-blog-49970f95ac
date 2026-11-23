@@ -31,6 +31,13 @@
     "name": {
       "type": "string"
     },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
     "votes": {
       "type": "integer",
       "default": 0,

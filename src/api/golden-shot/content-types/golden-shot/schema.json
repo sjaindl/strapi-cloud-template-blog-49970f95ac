@@ -1,0 +1,59 @@
+{
+  "kind": "singleType",
+  "collectionName": "golden_shots",
+  "info": {
+    "singularName": "golden-shot",
+    "pluralName": "golden-shots",
+    "displayName": "Torschuss Challenge",
+    "description": "Die aktuelle Torschuss Challenge (Golden Shot). Seite nur sichtbar, wenn \"aktiv\"; Anmeldung bis zum Anmeldeschluss, Voting über das verknüpfte Voting (Typ Torschuss Challenge)."
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "active": {
+      "type": "boolean",
+      "default": false
+    },
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "sponsor": {
+      "type": "string"
+    },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "description": {
+      "type": "richtext"
+    },
+    "finalDate": {
+      "type": "date"
+    },
+    "registrationOpen": {
+      "type": "boolean",
+      "default": false
+    },
+    "registrationDeadline": {
+      "type": "date"
+    },
+    "poll": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::poll.poll"
+    },
+    "resultImage": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images"
+      ]
+    }
+  }
+}

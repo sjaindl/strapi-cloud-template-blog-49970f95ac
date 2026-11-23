@@ -1045,6 +1045,84 @@ export interface ApiGlobalGlobal extends Struct.SingleTypeSchema {
   };
 }
 
+export interface ApiGoldenShotRegistrationGoldenShotRegistration
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'golden_shot_registrations';
+  info: {
+    description: 'Anmeldungen zur Torschuss Challenge \u00FCber die Website. Jede Anmeldung wird automatisch zur Voting-Option (Name + Foto); Kontaktdaten sind nur hier sichtbar.';
+    displayName: 'Torschuss-Challenge-Anmeldung';
+    pluralName: 'golden-shot-registrations';
+    singularName: 'golden-shot-registration';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    edition: Schema.Attribute.String;
+    email: Schema.Attribute.Email & Schema.Attribute.Required;
+    firstName: Schema.Attribute.String & Schema.Attribute.Required;
+    lastName: Schema.Attribute.String & Schema.Attribute.Required;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::golden-shot-registration.golden-shot-registration'
+    > &
+      Schema.Attribute.Private;
+    option: Schema.Attribute.Relation<
+      'oneToOne',
+      'api::poll-option.poll-option'
+    >;
+    phone: Schema.Attribute.String;
+    photo: Schema.Attribute.Media<'images'>;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiGoldenShotGoldenShot extends Struct.SingleTypeSchema {
+  collectionName: 'golden_shots';
+  info: {
+    description: 'Die aktuelle Torschuss Challenge (Golden Shot). Seite nur sichtbar, wenn "aktiv"; Anmeldung bis zum Anmeldeschluss, Voting \u00FCber das verkn\u00FCpfte Voting (Typ Torschuss Challenge).';
+    displayName: 'Torschuss Challenge';
+    pluralName: 'golden-shots';
+    singularName: 'golden-shot';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    active: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    description: Schema.Attribute.RichText;
+    finalDate: Schema.Attribute.Date;
+    image: Schema.Attribute.Media<'images'>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::golden-shot.golden-shot'
+    > &
+      Schema.Attribute.Private;
+    poll: Schema.Attribute.Relation<'oneToOne', 'api::poll.poll'>;
+    publishedAt: Schema.Attribute.DateTime;
+    registrationDeadline: Schema.Attribute.Date;
+    registrationOpen: Schema.Attribute.Boolean &
+      Schema.Attribute.DefaultTo<false>;
+    resultImage: Schema.Attribute.Media<'images'>;
+    sponsor: Schema.Attribute.String;
+    title: Schema.Attribute.String & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiHallenturnierRegistrationHallenturnierRegistration
   extends Struct.CollectionTypeSchema {
   collectionName: 'hallenturnier_registrations';
@@ -1368,6 +1446,7 @@ export interface ApiPollOptionPollOption extends Struct.CollectionTypeSchema {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    image: Schema.Attribute.Media<'images'>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
@@ -1397,7 +1476,7 @@ export interface ApiPollOptionPollOption extends Struct.CollectionTypeSchema {
 export interface ApiPollPoll extends Struct.CollectionTypeSchema {
   collectionName: 'polls';
   info: {
-    description: 'Tor des Jahres / Spieler der Saison eines Jahres. Nur offene Votings nehmen Stimmen an.';
+    description: 'Tor des Jahres / Spieler der Saison / Torschuss Challenge eines Jahres. Nur offene Votings nehmen Stimmen an (bis "Voting endet", falls gesetzt).';
     displayName: 'Voting';
     pluralName: 'polls';
     singularName: 'poll';
@@ -1407,6 +1486,7 @@ export interface ApiPollPoll extends Struct.CollectionTypeSchema {
   };
   attributes: {
     adminTitle: Schema.Attribute.String & Schema.Attribute.Private;
+    closesAt: Schema.Attribute.DateTime;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -1420,7 +1500,9 @@ export interface ApiPollPoll extends Struct.CollectionTypeSchema {
     >;
     publishedAt: Schema.Attribute.DateTime;
     surveyUrl: Schema.Attribute.String;
-    type: Schema.Attribute.Enumeration<['goalOfTheYear', 'playerOfTheYear']> &
+    type: Schema.Attribute.Enumeration<
+      ['goalOfTheYear', 'playerOfTheYear', 'goldenShot']
+    > &
       Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
@@ -2306,6 +2388,8 @@ declare module '@strapi/strapi' {
       'api::event.event': ApiEventEvent;
       'api::gallery.gallery': ApiGalleryGallery;
       'api::global.global': ApiGlobalGlobal;
+      'api::golden-shot-registration.golden-shot-registration': ApiGoldenShotRegistrationGoldenShotRegistration;
+      'api::golden-shot.golden-shot': ApiGoldenShotGoldenShot;
       'api::hallenturnier-registration.hallenturnier-registration': ApiHallenturnierRegistrationHallenturnierRegistration;
       'api::hallenturnier.hallenturnier': ApiHallenturnierHallenturnier;
       'api::match.match': ApiMatchMatch;

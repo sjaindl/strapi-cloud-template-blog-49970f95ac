@@ -34,12 +34,12 @@ module.exports = createCoreController(UID, ({ strapi }) => ({
   async vote(ctx) {
     const option = await strapi.documents(UID).findOne({
       documentId: ctx.params.documentId,
-      populate: { poll: { fields: ['open'] } },
+      populate: { poll: { fields: ['open', 'closesAt'] } },
     });
     if (!option || !option.poll) {
       return ctx.notFound('Option nicht gefunden.');
     }
-    if (!option.poll.open) {
+    if (!option.poll.open || (option.poll.closesAt && new Date(option.poll.closesAt) <= new Date())) {
       return ctx.conflict('Das Voting ist beendet.');
     }
     if (!allowVote(`${ctx.request.ip}|${option.poll.documentId}`)) {

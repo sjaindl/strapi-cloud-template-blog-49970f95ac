@@ -135,8 +135,11 @@ Check: `curl 'https://cms.hvtdpstainz.at/api/news-items?pagination[pageSize]=1'`
       Test once: register a test team on the website, check both mails arrive, delete the test entry in the admin.
 - [ ] `DOCUMENTS_PASSWORD` in `~/strapi/.env` (protected documents, see "Documents" below).
 - [ ] `IS_PROXIED=true` in `~/strapi/.env` (rate limits of votes, downloads and registrations see the visitor's IP).
+- [ ] **Security, right away (independent of the switch):** delete `<webroot>/api/uploadFile.php` on the server (it
+      accepted any file, also scripts, into the web root) and upload the fixed `api/getGoldenShot.php` (no longer
+      returns email/phone of the participants).
 - [ ] New Strapi version deployed (`git pull`, `npm ci`, `npm run build`, `pm2 restart strapi-hvtdp`).
-- [ ] Areas migrated in this order: `announcement club fanshop documents championship videos gallery pages news-categories`.
+- [ ] Areas migrated in this order: `announcement club fanshop documents championship videos gallery pages news-categories goldenshot`.
 - [ ] `videos` run once more **right before** deploying the website (current vote counts), never again afterwards.
 - [ ] Postman collection (production environment) passes, then deploy the website.
 
@@ -163,6 +166,7 @@ runs the selected areas in production mode and always starts the server again â€
 ./migrate-to-strapi.sh --strapi-dir ~/strapi --images <webroot>/assets/images gallery   # ~2,900 photos, see below
 ./migrate-to-strapi.sh --strapi-dir ~/strapi --images <webroot>/assets/images --videos <webroot>/assets/videos pages   # after gallery
 ./migrate-to-strapi.sh --strapi-dir ~/strapi news-categories   # after championship + videos
+./migrate-to-strapi.sh --strapi-dir ~/strapi --images <webroot>/assets/images goldenshot
 ./migrate-to-strapi.sh --strapi-dir ~/strapi --images <webroot>/assets/images   # all areas
 ./migrate-to-strapi.sh --list                                                   # available areas
 ```
@@ -225,6 +229,14 @@ Vereinsleben) from its title and links match reports to their match (about 60 of
 the title, e.g. "Verdienter Heimsieg!", are listed for linking in the admin). It only fills in what is missing, so
 categories and links changed in the admin are kept; `node scripts/migrate-news-categories.js --force true`
 recomputes everything. New news: pick the category (and for a match report the match) in the admin.
+
+**Torschuss Challenge (Golden Shot):** `goldenshot` creates the page (switched off, the 2026 edition is over) and
+the 2026 voting with its 16 participants and votes (no contact data). For a new edition: create a voting of type
+"Torschuss Challenge" (year, optional "Voting endet"), link it in the single type "Torschuss Challenge", update the
+texts, switch on "aktiv" and "Anmeldung offen". Registrations (`POST /api/golden-shot-registrations/register`, with
+an optional photo) are stored with their contact data in "Torschuss-Challenge-Anmeldung", appear as voting options
+(name + photo) right away and trigger the same two mails as the Hallenturnier (SMTP setup above). Switch "open" on
+the voting once the registration phase is over. The page is `/#/torschusschallenge`.
 
 **Videos & voting:** the goal videos are attached to the championship matches, so run `videos` after `club`
 and `championship` (it creates matches for older seasons and events, and fills in missing match dates).
