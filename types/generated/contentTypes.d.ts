@@ -1172,6 +1172,7 @@ export interface ApiMatchMatch extends Struct.CollectionTypeSchema {
     localizations: Schema.Attribute.Relation<'oneToMany', 'api::match.match'> &
       Schema.Attribute.Private;
     publishedAt: Schema.Attribute.DateTime;
+    reports: Schema.Attribute.Relation<'oneToMany', 'api::news-item.news-item'>;
     round: Schema.Attribute.Integer &
       Schema.Attribute.SetMinMax<
         {
@@ -1228,7 +1229,7 @@ export interface ApiMemberMember extends Struct.CollectionTypeSchema {
 export interface ApiNewsItemNewsItem extends Struct.CollectionTypeSchema {
   collectionName: 'news_items';
   info: {
-    description: 'HV TDP Stainz news';
+    description: 'HV TDP Stainz news. Spielberichte k\u00F6nnen mit ihrem Spiel verkn\u00FCpft werden (Link auf der Startseite und bei den Ergebnissen).';
     displayName: 'News';
     pluralName: 'news-items';
     singularName: 'news-item';
@@ -1237,6 +1238,10 @@ export interface ApiNewsItemNewsItem extends Struct.CollectionTypeSchema {
     draftAndPublish: true;
   };
   attributes: {
+    category: Schema.Attribute.Enumeration<
+      ['Spielbericht', 'Turnier', 'Veranstaltung', 'Vereinsleben']
+    > &
+      Schema.Attribute.DefaultTo<'Vereinsleben'>;
     content: Schema.Attribute.RichText;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
@@ -1250,6 +1255,7 @@ export interface ApiNewsItemNewsItem extends Struct.CollectionTypeSchema {
       'api::news-item.news-item'
     > &
       Schema.Attribute.Private;
+    match: Schema.Attribute.Relation<'manyToOne', 'api::match.match'>;
     newsId: Schema.Attribute.Integer & Schema.Attribute.Unique;
     publishedAt: Schema.Attribute.DateTime;
     title: Schema.Attribute.String & Schema.Attribute.Required;

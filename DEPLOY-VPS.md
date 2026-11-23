@@ -3,6 +3,10 @@
 Strapi runs as a Node process on `127.0.0.1:1337`, behind nginx on `cms.hvtdpstainz.at`,
 with its data in the existing MariaDB server.
 
+> **Before deploying the new website**, work through the checklist in [5b](#5b-migrate-the-club-data-page-by-page) —
+> above all the **SMTP mail account** in `~/strapi/.env`. Without it, Hallenturnier registrations are stored, but
+> neither the club nor the registrant gets a mail.
+
 ## 1. DNS
 
 Create an `A` (and `AAAA`, if used) record `cms.hvtdpstainz.at` pointing to the VPS.
@@ -123,6 +127,19 @@ Check: `curl 'https://cms.hvtdpstainz.at/api/news-items?pagination[pageSize]=1'`
 
 ## 5b. Migrate the club data (page by page)
 
+### Checklist before switching the website to Strapi
+
+- [ ] **Mail account (SMTP) in `~/strapi/.env`** — `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `MAIL_FROM`,
+      `REGISTRATION_MAIL_TO` (and optionally `REGISTRATION_MAIL_CC`), then `pm2 restart strapi-hvtdp`. Details under
+      "Hallenturnier registration mails" below. **Without it no registration mails are sent** (only logged).
+      Test once: register a test team on the website, check both mails arrive, delete the test entry in the admin.
+- [ ] `DOCUMENTS_PASSWORD` in `~/strapi/.env` (protected documents, see "Documents" below).
+- [ ] `IS_PROXIED=true` in `~/strapi/.env` (rate limits of votes, downloads and registrations see the visitor's IP).
+- [ ] New Strapi version deployed (`git pull`, `npm ci`, `npm run build`, `pm2 restart strapi-hvtdp`).
+- [ ] Areas migrated in this order: `announcement club fanshop documents championship videos gallery pages news-categories`.
+- [ ] `videos` run once more **right before** deploying the website (current vote counts), never again afterwards.
+- [ ] Postman collection (production environment) passes, then deploy the website.
+
 The remaining website data moves from the PHP endpoints to Strapi one area at a time. Every area has a
 script in `scripts/migrate-<area>.js` (shared helpers: `scripts/lib/migrate-utils.js`). Each script:
 
@@ -145,6 +162,7 @@ runs the selected areas in production mode and always starts the server again �
 ./migrate-to-strapi.sh --strapi-dir ~/strapi --images <webroot>/assets/images videos   # after club + championship
 ./migrate-to-strapi.sh --strapi-dir ~/strapi --images <webroot>/assets/images gallery   # ~2,900 photos, see below
 ./migrate-to-strapi.sh --strapi-dir ~/strapi --images <webroot>/assets/images --videos <webroot>/assets/videos pages   # after gallery
+./migrate-to-strapi.sh --strapi-dir ~/strapi news-categories   # after championship + videos
 ./migrate-to-strapi.sh --strapi-dir ~/strapi --images <webroot>/assets/images   # all areas
 ./migrate-to-strapi.sh --list                                                   # available areas
 ```
@@ -201,6 +219,12 @@ pm2 restart strapi-hvtdp
 Without `SMTP_HOST` registrations are still stored, but the mails are only written to the log
 (`pm2 logs strapi-hvtdp`). GMX may require enabling "POP3/IMAP/SMTP access" in the mailbox settings first.
 `postHallenturnier.php` is no longer used by the website.
+
+**News categories:** `news-categories` gives every news item a category (Spielbericht, Turnier, Veranstaltung,
+Vereinsleben) from its title and links match reports to their match (about 60 of 109; reports without teams in
+the title, e.g. "Verdienter Heimsieg!", are listed for linking in the admin). It only fills in what is missing, so
+categories and links changed in the admin are kept; `node scripts/migrate-news-categories.js --force true`
+recomputes everything. New news: pick the category (and for a match report the match) in the admin.
 
 **Videos & voting:** the goal videos are attached to the championship matches, so run `videos` after `club`
 and `championship` (it creates matches for older seasons and events, and fills in missing match dates).

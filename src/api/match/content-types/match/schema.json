@@ -78,6 +78,12 @@
     "adminTitle": {
       "type": "string",
       "private": true
+    },
+    "reports": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::news-item.news-item",
+      "mappedBy": "match"
     }
   }
 }

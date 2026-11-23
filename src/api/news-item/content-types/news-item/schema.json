@@ -5,7 +5,7 @@
     "singularName": "news-item",
     "pluralName": "news-items",
     "displayName": "News",
-    "description": "HV TDP Stainz news"
+    "description": "HV TDP Stainz news. Spielberichte können mit ihrem Spiel verknüpft werden (Link auf der Startseite und bei den Ergebnissen)."
   },
   "options": {
     "draftAndPublish": true
@@ -31,13 +31,33 @@
       "type": "media",
       "multiple": false,
       "required": false,
-      "allowedTypes": ["images"]
+      "allowedTypes": [
+        "images"
+      ]
     },
     "homeImage": {
       "type": "media",
       "multiple": false,
       "required": false,
-      "allowedTypes": ["images"]
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "category": {
+      "type": "enumeration",
+      "enum": [
+        "Spielbericht",
+        "Turnier",
+        "Veranstaltung",
+        "Vereinsleben"
+      ],
+      "default": "Vereinsleben"
+    },
+    "match": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::match.match",
+      "inversedBy": "reports"
     }
   }
 }
