@@ -1316,6 +1316,40 @@ export interface ApiHallenturnierHallenturnier extends Struct.SingleTypeSchema {
   };
 }
 
+export interface ApiLegalPageLegalPage extends Struct.CollectionTypeSchema {
+  collectionName: 'legal_pages';
+  info: {
+    description: 'Impressum und Datenschutzerkl\u00E4rung (/impressum, /datenschutz). Platzhalter in [[doppelten eckigen Klammern]] werden auf der Website markiert, bis sie ersetzt sind.';
+    displayName: 'Rechtliches';
+    pluralName: 'legal-pages';
+    singularName: 'legal-page';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    content: Schema.Attribute.RichText;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    effectiveDate: Schema.Attribute.Date;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::legal-page.legal-page'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    slug: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique;
+    title: Schema.Attribute.String & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiMatchMatch extends Struct.CollectionTypeSchema {
   collectionName: 'matches';
   info: {
@@ -2505,6 +2539,7 @@ declare module '@strapi/strapi' {
       'api::golden-shot.golden-shot': ApiGoldenShotGoldenShot;
       'api::hallenturnier-registration.hallenturnier-registration': ApiHallenturnierRegistrationHallenturnierRegistration;
       'api::hallenturnier.hallenturnier': ApiHallenturnierHallenturnier;
+      'api::legal-page.legal-page': ApiLegalPageLegalPage;
       'api::match.match': ApiMatchMatch;
       'api::member.member': ApiMemberMember;
       'api::news-item.news-item': ApiNewsItemNewsItem;

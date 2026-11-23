@@ -142,7 +142,10 @@ Check: `curl 'https://cms.hvtdpstainz.at/api/news-items?pagination[pageSize]=1'`
 - [ ] If the club area was already migrated with an older Strapi version: run `club` again after deploying this one
       (the player field `status` was renamed to `squad` because the admin could not show it, and the member lists
       got their "Stand" dates on the team page).
-- [ ] Areas migrated in this order: `announcement club fanshop documents championship videos gallery pages news-categories goldenshot events`.
+- [ ] Areas migrated in this order: `announcement club fanshop documents championship videos gallery pages news-categories goldenshot events legal`.
+- [ ] **Legal pages:** after `legal`, check "Rechtliches" in the admin (the drafts are complete, no `[[…]]` placeholders left;
+      the website would highlight any new placeholders). Have the texts
+      reviewed — they are drafts, not legal advice.
 - [ ] `videos` run once more **right before** deploying the website (current vote counts), never again afterwards.
 - [ ] Postman collection (production environment) passes, then deploy the website.
 - [ ] After the switch: clean up the web server and switch the chatbot, see "After the switch" below.

@@ -1,0 +1,32 @@
+{
+  "kind": "collectionType",
+  "collectionName": "legal_pages",
+  "info": {
+    "singularName": "legal-page",
+    "pluralName": "legal-pages",
+    "displayName": "Rechtliches",
+    "description": "Impressum und Datenschutzerklärung (/impressum, /datenschutz). Platzhalter in [[doppelten eckigen Klammern]] werden auf der Website markiert, bis sie ersetzt sind."
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "slug": {
+      "type": "string",
+      "required": true,
+      "unique": true,
+      "regex": "^[a-z0-9-]+$"
+    },
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "content": {
+      "type": "richtext"
+    },
+    "effectiveDate": {
+      "type": "date"
+    }
+  }
+}
